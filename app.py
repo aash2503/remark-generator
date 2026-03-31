@@ -210,8 +210,8 @@ st.markdown("""
     section[data-testid="stSidebar"] .stMarkdown { color: #e2e8f0; }
     
     /* Headers */
-    h1, h2, h3 { color: #2dd4bf !important; }
-    .stMarkdown h1 { color: #2dd4bf !important; }
+    h2, h3 { color: #2dd4bf !important; }
+    .stMarkdown h2, .stMarkdown h3 { color: #2dd4bf !important; }
     
     /* Text areas and inputs */
     .stTextArea textarea {
