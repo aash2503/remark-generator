@@ -1,6 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 import os
+import re
 
 # --- API CONFIGURATION ---
 API_KEY = os.environ.get("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY", "")
@@ -75,13 +76,18 @@ In certain cases, the descriptors may be followed by parentheses which provide a
 Responses should vary sentence structure actively and ensure that phrasing is positive and upbeat. Only the very last line of the comment should be talking to the student directly. Responses should not be fewer than 55 words, and can be up to 75 words. 
 
 Required Footer:
-- If 21CC mode: **Note that the output from here is a first draft, and will always require editing as the AI is not capable of producing flawlessly accurate output. You may consider using the “What needs editing?” shortcut to kickstart your editing process.**
-- If BLGPS mode: **Note that the output from here is a first draft, and will always require editing as the AI is not capable of producing flawlessly accurate output. Pay special attention to whether the descriptors match the BLGPS student outcome mentioned in the remark, if any. You may consider using the “What needs editing?” shortcut to kickstart your editing process.**
+- If 21CC mode: **Note that the output from here is a first draft, and will always require editing as the AI is not capable of producing flawlessly accurate output. You may consider using the "Italicize Inaccuracies" button in the sidebar to kickstart your editing process.**
+- If BLGPS mode: **Note that the output from here is a first draft, and will always require editing as the AI is not capable of producing flawlessly accurate output. Pay special attention to whether the descriptors match the BLGPS student outcome mentioned in the remark, if any. You may consider using the "Italicize Inaccuracies" button in the sidebar to kickstart your editing process.**
 
-Commands:
-'analyse': breakdown of competencies/values in table format.
-'comment': repeat remarks verbatim but italicize areas likely for inaccuracy.
-'teach me how to use this bot': display the usage guide.
+Available actions (accessible via sidebar buttons — the user does NOT type these as commands):
+- "Guide / Instructions" button: When the user triggers this, display a clear usage guide explaining:
+  1. Input format: start with pronouns (she/her or he/him), then for each student provide their index number, descriptors (space-separated), optional parenthetical info, and a conduct score 1-5.
+  2. Example: she/her 01 responsible hardworking (Class Monitor) 5, 02 cheerful friendly 4
+  3. The two modes available: BLGPS Mode and 21CC Mode, selectable in the sidebar.
+  4. After generating, use the sidebar buttons: "Analyse Class Data" for a competency breakdown table, and "Italicize Inaccuracies" to highlight areas that may need editing.
+  5. The app also supports a "Names Enabled" input mode where teachers can enter student names in a structured form — names are kept private and never sent to the AI.
+- "Analyse Class Data" button: Provide a breakdown of competencies/values used in the remarks in table format.
+- "Italicize Inaccuracies" button: Repeat the remarks verbatim but italicize areas that are likely candidates for inaccuracy or that the teacher should double-check.
 """
 
 # --- FEW-SHOT EXEMPLARS (fed as conversation history) ---
@@ -147,6 +153,34 @@ def call_gemini(user_text, current_mode):
         return response.text
     except Exception as e:
         return f"⚠️ API Error: {e}"
+
+def _assemble_structured_input(students, pronouns):
+    """Convert structured form data into API-safe text with index placeholders.
+    Returns (api_text, name_map) where name_map = {"S01": "Real Name", ...}."""
+    name_map = {}
+    parts = []
+    for i, s in enumerate(students, start=1):
+        idx = f"S{i:02d}"
+        name_map[idx] = s["name"]
+        tokens = [idx]
+        if s.get("characteristics"):
+            tokens.append(s["characteristics"])
+        if s.get("roles"):
+            tokens.append(f"({s['roles']})")
+        if s.get("awards"):
+            tokens.append(f"({s['awards']})")
+        if s.get("other"):
+            tokens.append(f"({s['other']})")
+        tokens.append(str(s["rating"]))
+        parts.append(" ".join(tokens))
+    api_text = f"{pronouns} " + ", ".join(parts)
+    return api_text, name_map
+
+def _restore_names(text, name_map):
+    """Replace index placeholders (S01, S02, ...) with real student names."""
+    for idx, name in name_map.items():
+        text = re.sub(r'\b' + re.escape(idx) + r'\b', name, text)
+    return text
 
 # --- STREAMLIT UI ---
 st.set_page_config(page_title="Teacher Remark Assistant", layout="wide")
@@ -238,6 +272,8 @@ if "last_remarks" not in st.session_state:
     st.session_state.last_remarks = ""
 if "last_input" not in st.session_state:
     st.session_state.last_input = ""
+if "name_map" not in st.session_state:
+    st.session_state.name_map = {}
 
 st.title("🇸🇬 Student Remark Generator")
 st.markdown("Automated academic progress remarks based on Singapore 21CC and BLGPS frameworks.")
@@ -247,45 +283,109 @@ with st.sidebar:
     st.header("Settings")
     mode_selection = st.radio("Target Mode:", ["BLGPS Mode", "21CC Mode"])
     st.divider()
+    input_mode = st.radio("Input Mode:", ["Quick Entry", "Names Enabled"],
+                          help="Quick Entry: paste index-number data directly. Names Enabled: structured form with student names (names stay private and are never sent to the AI).")
+    st.divider()
     st.subheader("Special Actions")
     help_clicked = st.button("📖 Guide / Instructions")
     analyse_clicked = st.button("📊 Analyse Class Data")
     accuracy_clicked = st.button("🔍 Italicize Inaccuracies")
 
-# Input Area
-user_data_input = st.text_area("Input Student Details:", placeholder="she/her 01 responsible (Class Monitor) 5, 02 helpful 4", height=150)
+# --- INPUT AREA ---
+if input_mode == "Quick Entry":
+    user_data_input = st.text_area("Input Student Details:", placeholder="she/her 01 responsible (Class Monitor) 5, 02 helpful 4", height=150)
 
-# Button Logic
-if st.button("🚀 Generate Remarks", type="primary"):
-    if user_data_input:
-        with st.spinner("Generating..."):
-            res = call_gemini(user_data_input, mode_selection)
-            st.session_state.last_remarks = res
-            st.session_state.last_input = user_data_input
-            st.markdown("### Generated Remarks")
-            st.write(res)
-            st.download_button("Download Remarks", res, file_name="student_remarks.txt")
-    else:
-        st.error("Please enter student data.")
+    if st.button("🚀 Generate Remarks", type="primary"):
+        if user_data_input:
+            with st.spinner("Generating..."):
+                res = call_gemini(user_data_input, mode_selection)
+                st.session_state.last_remarks = res
+                st.session_state.last_input = user_data_input
+                st.session_state.name_map = {}
+                st.markdown("### Generated Remarks")
+                st.write(res)
+                st.download_button("Download Remarks", res, file_name="student_remarks.txt")
+        else:
+            st.error("Please enter student data.")
+
+else:  # Names Enabled mode
+    st.markdown("### 📝 Names Enabled Mode")
+    st.caption("Student names are kept private — only index placeholders are sent to the AI.")
+
+    pronouns = st.radio("Pronouns for this batch:", ["she/her", "he/him"], horizontal=True)
+    num_students = st.number_input("Number of students:", min_value=1, max_value=45, value=1, step=1)
+
+    students = []
+    for i in range(int(num_students)):
+        with st.expander(f"Student {i + 1}", expanded=(i == 0)):
+            name = st.text_input("Name", key=f"name_{i}", placeholder="e.g. Wei Lin")
+            characteristics = st.text_input("Characteristics / Descriptors", key=f"chars_{i}", placeholder="e.g. cheerful, responsible, hardworking")
+            roles = st.text_input("Class / Leadership Roles (optional)", key=f"roles_{i}", placeholder="e.g. Class Monitor, Prefect")
+            awards = st.text_input("Awards (optional)", key=f"awards_{i}", placeholder="e.g. Good Progress Award")
+            other = st.text_input("Other Information (optional)", key=f"other_{i}", placeholder="e.g. frequent latecoming, can focus better")
+            rating = st.selectbox("Behaviour Rating", options=[5, 4, 3, 2, 1], key=f"rating_{i}",
+                                  help="5 = Excellent conduct, 1 = Needs significant improvement")
+            students.append({
+                "name": name.strip(),
+                "characteristics": characteristics.strip(),
+                "roles": roles.strip(),
+                "awards": awards.strip(),
+                "other": other.strip(),
+                "rating": rating,
+            })
+
+    if st.button("🚀 Generate Remarks", type="primary"):
+        # Validate: every student needs at least a name
+        missing = [i + 1 for i, s in enumerate(students) if not s["name"]]
+        if missing:
+            st.error(f"Please enter a name for student(s): {', '.join(str(m) for m in missing)}")
+        else:
+            with st.spinner("Generating..."):
+                api_text, name_map = _assemble_structured_input(students, pronouns)
+                res = call_gemini(api_text, mode_selection)
+                named_res = _restore_names(res, name_map)
+                st.session_state.last_remarks = named_res
+                st.session_state.last_input = api_text
+                st.session_state.name_map = name_map
+                st.markdown("### Generated Remarks")
+                st.write(named_res)
+                st.download_button("Download Remarks", named_res, file_name="student_remarks.txt")
 
 # Process Sidebar Actions — use last generated remarks as context
 if help_clicked:
     with st.spinner("Loading guide..."):
-        st.info(call_gemini("teach me how to use this bot", mode_selection))
+        st.info(call_gemini("Display the full usage guide for this app, explaining the input format, modes, and available sidebar buttons.", mode_selection))
 
 if analyse_clicked:
     if st.session_state.last_remarks:
         with st.spinner("Analysing..."):
-            context = f"Here are the remarks I previously generated based on this input:\n\nINPUT: {st.session_state.last_input}\n\nREMARKS:\n{st.session_state.last_remarks}\n\nNow run the command: analyse"
-            st.write(call_gemini(context, mode_selection))
+            # Send sanitized input (no real names) to the API
+            sanitized_remarks = st.session_state.last_remarks
+            if st.session_state.name_map:
+                # Strip names back to placeholders for the API call
+                sanitized_remarks = st.session_state.last_remarks
+                for idx, name in st.session_state.name_map.items():
+                    sanitized_remarks = sanitized_remarks.replace(name, idx)
+            context = f"Here are the remarks I previously generated based on this input:\n\nINPUT: {st.session_state.last_input}\n\nREMARKS:\n{sanitized_remarks}\n\nNow analyse these remarks: provide a breakdown of competencies/values in table format."
+            res = call_gemini(context, mode_selection)
+            if st.session_state.name_map:
+                res = _restore_names(res, st.session_state.name_map)
+            st.write(res)
     else:
         st.warning("Generate remarks first before analysing.")
 
 if accuracy_clicked:
     if st.session_state.last_remarks:
         with st.spinner("Checking accuracy..."):
-            context = f"Here are the remarks I previously generated based on this input:\n\nINPUT: {st.session_state.last_input}\n\nREMARKS:\n{st.session_state.last_remarks}\n\nNow run the command: comment"
-            st.write(call_gemini(context, mode_selection))
+            sanitized_remarks = st.session_state.last_remarks
+            if st.session_state.name_map:
+                for idx, name in st.session_state.name_map.items():
+                    sanitized_remarks = sanitized_remarks.replace(name, idx)
+            context = f"Here are the remarks I previously generated based on this input:\n\nINPUT: {st.session_state.last_input}\n\nREMARKS:\n{sanitized_remarks}\n\nNow repeat the remarks verbatim but italicize areas likely for inaccuracy."
+            res = call_gemini(context, mode_selection)
+            if st.session_state.name_map:
+                res = _restore_names(res, st.session_state.name_map)
+            st.write(res)
     else:
         st.warning("Generate remarks first before checking accuracy.")
 
