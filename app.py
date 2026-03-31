@@ -279,7 +279,9 @@ st.markdown("""
     section[data-testid="stSidebar"] .stMarkdown { color: #e2e8f0; }
     
     /* Headers */
+    h1 { color: #f59e0b !important; }
     h2, h3 { color: #2dd4bf !important; }
+    .stMarkdown h1 { color: #f59e0b !important; }
     .stMarkdown h2, .stMarkdown h3 { color: #2dd4bf !important; }
     
     /* Text areas and inputs */
@@ -394,22 +396,29 @@ st.markdown("<h1 style='color: #f59e0b !important;'>🇸🇬 Student Remarks Ass
 # Sidebar
 with st.sidebar:
     st.header("Settings")
-    mode_selection = st.radio("Target Mode:", ["BLGPS Mode", "21CC Mode"])
+    mode_selection = st.radio("Target Mode:", ["BLGPS Mode", "21CC Mode"],
+                               help="BLGPS Mode uses Boon Lay Garden Primary School's Curious Thinker / Confident Learner / Compassionate Contributor framework. 21CC Mode uses MOE Singapore's 21st Century Competencies, R3ICH values and social-emotional competencies.")
     st.divider()
     st.subheader("Special Actions")
-    help_clicked = st.button("📖 Guide / Instructions")
-    analyse_clicked = st.button("📊 Analyse Class Data")
-    accuracy_clicked = st.button("🔍 Italicize Inaccuracies")
+    help_clicked = st.button("📖 Guide / Instructions",
+                             help="Shows a full usage guide: input format, modes, and features.")
+    analyse_clicked = st.button("📊 Analyse Class Data",
+                                help="Generates a table breaking down which competencies and values were used in the remarks.")
+    accuracy_clicked = st.button("🔍 Italicize Inaccuracies",
+                                 help="Repeats the remarks verbatim but italicizes phrases the teacher should double-check for accuracy.")
 
 # --- INPUT AREA (Tabs) ---
 tab_quick, tab_names = st.tabs(["⚡ Quick Entry", "📝 Names Enabled"])
 
 with tab_quick:
-    st.button("📋 Load Sample Data", on_click=_load_sample_quick, key="sample_quick")
+    st.button("📋 Load Sample Data", on_click=_load_sample_quick, key="sample_quick",
+              help="Populates the text box with a full 38-student sample dataset for testing.")
     user_data_input = st.text_area("Input Student Details:",
                                    placeholder="she/her 01 responsible (Class Monitor) 5, 02 helpful 4",
-                                   height=150, key="quick_input")
-    if st.button("🚀 Generate Remarks", type="primary", key="gen_quick"):
+                                   height=150, key="quick_input",
+                                   help="Format: start with pronouns (she/her or he/him), then for each student: index number, descriptors, optional (parenthetical info), and a conduct score 1-5. Separate students with commas.")
+    if st.button("🚀 Generate Remarks", type="primary", key="gen_quick",
+                 help="Sends the input to Gemini AI and generates one remark per student."):
         if user_data_input:
             with st.spinner("Generating..."):
                 res = call_gemini(user_data_input, mode_selection)
@@ -424,23 +433,31 @@ with tab_quick:
 
 with tab_names:
     st.caption("Student names are kept private — only index placeholders are sent to the AI.")
-    st.button("📋 Load Sample Data", on_click=_load_sample_names, key="sample_names")
-    pronouns = st.radio("Pronouns for this batch:", ["she/her", "he/him"], horizontal=True, key="pronouns_radio")
-    num_students = st.number_input("Number of students:", min_value=1, max_value=45, value=1, step=1, key="num_students_input")
+    st.button("📋 Load Sample Data", on_click=_load_sample_names, key="sample_names",
+              help="Fills in 20 sample she/her students with placeholder names and descriptors for testing.")
+    pronouns = st.radio("Pronouns for this batch:", ["she/her", "he/him"], horizontal=True, key="pronouns_radio",
+                        help="All students in this batch will use the selected pronouns. Submit separate batches for different pronoun groups.")
+    num_students = st.number_input("Number of students:", min_value=1, max_value=45, value=1, step=1, key="num_students_input",
+                                   help="Set the number of students to generate remarks for. An entry form will appear for each student.")
     st.caption("Rating guide: 5 = Excellent · 4 = Very Good · 3 = Good · 2 = Satisfactory · 1 = Needs Improvement")
 
     students = []
     for i in range(int(num_students)):
         with st.expander(f"Student {i + 1}", expanded=(i == 0)):
-            name = st.text_input("Name", key=f"name_{i}", placeholder="e.g. Wei Lin")
+            name = st.text_input("Name", key=f"name_{i}", placeholder="e.g. Wei Lin",
+                               help="Student's real name. This is kept private and never sent to the AI — it will be swapped back into the final output.")
             characteristics = st.text_input("Characteristics / Descriptors", key=f"chars_{i}",
-                                            placeholder="e.g. cheerful, responsible, hardworking")
+                                            placeholder="e.g. cheerful, responsible, hardworking",
+                                            help="Space-separated descriptors of the student's conduct and disposition. These drive the content of the remark.")
             roles = st.text_input("Class / Leadership Roles (optional)", key=f"roles_{i}",
-                                  placeholder="e.g. Class Monitor, Prefect")
+                                  placeholder="e.g. Class Monitor, Prefect",
+                                  help="Any leadership positions or class roles held by the student. These are woven into the remark.")
             awards = st.text_input("Awards (optional)", key=f"awards_{i}",
-                                   placeholder="e.g. Good Progress Award")
+                                   placeholder="e.g. Good Progress Award",
+                                   help="Any awards or recognitions the student has received this semester.")
             other = st.text_input("Other Information (optional)", key=f"other_{i}",
-                                  placeholder="e.g. frequent latecoming, can focus better")
+                                  placeholder="e.g. frequent latecoming, can focus better",
+                                  help="Areas for improvement or additional context. These are phrased gently and positively in the remark.")
             rating = st.selectbox("Behaviour Rating", options=[5, 4, 3, 2, 1], key=f"rating_{i}",
                                   help="5 = Excellent conduct, 1 = Needs significant improvement")
             students.append({
@@ -452,7 +469,8 @@ with tab_names:
                 "rating": rating,
             })
 
-    if st.button("🚀 Generate Remarks", type="primary", key="gen_names"):
+    if st.button("🚀 Generate Remarks", type="primary", key="gen_names",
+                 help="Sends anonymised data to Gemini AI. Student names are replaced with placeholders and restored in the final output."):
         missing = [i + 1 for i, s in enumerate(students) if not s["name"]]
         if missing:
             st.error(f"Please enter a name for student(s): {', '.join(str(m) for m in missing)}")
@@ -474,7 +492,8 @@ if st.session_state.last_remarks:
     st.markdown("### Generated Remarks")
     st.write(st.session_state.last_remarks)
     txt_data = _remarks_to_txt(st.session_state.last_remarks)
-    st.download_button("📥 Download TXT", txt_data, file_name="student_remarks.txt", mime="text/plain")
+    st.download_button("📥 Download TXT", txt_data, file_name="student_remarks.txt", mime="text/plain",
+                       help="Downloads the remarks as a plain text file (one paragraph per student, footer excluded).")
     with st.expander("📋 Copy raw text"):
         st.code(st.session_state.last_remarks, language=None)
 
