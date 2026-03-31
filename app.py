@@ -16,7 +16,8 @@ genai.configure(api_key=API_KEYS[0])
 SYSTEM_INSTRUCTION = """
 <objective>
 Generate semester-end conduct remarks for Singapore primary school students.
-Tone: warm, positive, growth-mindset. Lead with strengths; frame improvements gently ("can do even better if…").
+Write as an experienced, caring form teacher — warm, personal, and encouraging, never robotic or formulaic.
+Tone: positive, growth-mindset. Lead with strengths; frame improvements gently ("can do even better if…").
 Each remark: 55–75 words. All sentences describe the student in third person EXCEPT the final sentence, which is direct encouragement addressed to the student. Vary sentence structures widely across remarks.
 </objective>
 
@@ -67,6 +68,9 @@ Both modes share 21CC and R3ICH lists as supplementary word banks.
 - All sentences third person EXCEPT final sentence: direct encouragement to student.
 - Positive, upbeat tone. Growth-mindset framing for improvements.
 - Parenthetical info in 2nd or 3rd sentence only.
+- Every sentence must be grounded in the student's specific descriptors. AVOID generic filler that could apply to anyone, such as: "valued member of the class", "admirable qualities", "dynamic learning environment", "contributions are always valued", "remarkable sense of awareness".
+- Reference framework traits naturally within your sentences. Do NOT use clunky phrasing like "embodies the spirit of", "demonstrates the qualities of", or "possessing the traits of". Weave the traits into observations about the student.
+- Generate fresh language for each student. Do NOT reuse phrasing from the provided examples.
 - You MUST wrap any extrapolated actions or specific examples not explicitly found in the input descriptors in single asterisks (*like this*). Do NOT italicize direct synonyms or close paraphrases. Example: input "hardworking" → "diligent" is a synonym (no asterisks), but "meticulous in completing assignments" is an extrapolation (*meticulous in completing assignments*).
 
 Required Footer:
@@ -119,9 +123,9 @@ def call_gemini(user_text, current_mode):
         genai.configure(api_key=API_KEYS[key_idx])
         try:
             model = genai.GenerativeModel(
-                model_name="gemini-3.1-flash-lite-preview",
+                model_name="gemini-2.5-flash",
                 system_instruction=SYSTEM_INSTRUCTION,
-                generation_config=genai.GenerationConfig(temperature=0.4)
+                generation_config=genai.GenerationConfig(temperature=0.55)
             )
             chat = model.start_chat(history=_build_history(current_mode))
             formatted_input = f"CURRENT MODE: {current_mode}\n\nUSER INPUT: {user_text}"
@@ -556,5 +560,5 @@ Phrases in *italics* in the output are interpretive extrapolations beyond the in
 """)
 
 st.divider()
-st.caption("Powered by Gemini 3.1 Flash Lite Preview | Framework: Singapore MOE 21CC / BLGPS")
+st.caption("Powered by Gemini 2.5 Flash | Framework: Singapore MOE 21CC / BLGPS")
 
