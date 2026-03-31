@@ -212,23 +212,22 @@ _SAMPLE_QUICK = ("she/her 01 softspoken compassionate 4, 02 cheerful participati
     "18 dependable model student driven sincere 5, "
     "19 compassionate caring hardworking 5, "
     "he/him 20 reliable dependable hardworking 4, "
-    "22 friendly cheerful (can focus better) 4, "
-    "23 trustworthy reliable dependable helpful sincere 5, "
-    "24 easygoing friendly (could work better with others) 3, "
-    "25 bright outspoken (can work harder) 3, "
-    "27 hardworking considerate (could focus better) 4, "
-    "28 reliable easygoing helpful 5, 29 hardworking driven sincere 5, "
-    "30 respectful disciplined (could speak up more) 4, "
-    "31 helpful sincere (could work better with others) 4, "
-    "32 outspoken cheerful (could focus better) 3, "
-    "33 insightful inquisitive (could work better with others) 3, "
-    "34 reliable good leader compassionate 5, "
-    "35 respectful dependable (could work on confidence) 3, "
-    "36 hardworking softspoken reliable 5, "
-    "37 outspoken distracted (could work better with others) 3, "
-    "38 respectful hardworking dependable 4, "
-    "39 cheerful playful outspoken (could focus better) 3 "
-    "she/her 40 easygoing friendly participative 4")
+    "21 friendly cheerful (can focus better) 4, "
+    "22 trustworthy reliable dependable helpful sincere 5, "
+    "23 easygoing friendly (could work better with others) 3, "
+    "24 bright outspoken (can work harder) 3, "
+    "25 hardworking considerate (could focus better) 4, "
+    "26 reliable easygoing helpful 5, 27 hardworking driven sincere 5, "
+    "28 respectful disciplined (could speak up more) 4, "
+    "29 helpful sincere (could work better with others) 4, "
+    "30 outspoken cheerful (could focus better) 3, "
+    "31 insightful inquisitive (could work better with others) 3, "
+    "32 reliable good leader compassionate 5, "
+    "33 respectful dependable (could work on confidence) 3, "
+    "34 hardworking softspoken reliable 5, "
+    "35 outspoken distracted (could work better with others) 3, "
+    "36 respectful hardworking dependable 4, "
+    "37 cheerful playful outspoken (could focus better) 3")
 
 _SAMPLE_NAMES = [
     {"name": "Aisha", "chars": "softspoken compassionate", "other": "", "rating": 4},
@@ -250,7 +249,6 @@ _SAMPLE_NAMES = [
     {"name": "Chloe", "chars": "cheerful resilient confident", "other": "", "rating": 4},
     {"name": "Wei Xuan", "chars": "dependable model student driven sincere", "other": "", "rating": 5},
     {"name": "Amira", "chars": "compassionate caring hardworking", "other": "", "rating": 5},
-    {"name": "Rachel", "chars": "easygoing friendly participative", "other": "", "rating": 4},
 ]
 
 def _load_sample_quick():
