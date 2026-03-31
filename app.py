@@ -150,7 +150,7 @@ def call_gemini(user_text, current_mode):
         genai.configure(api_key=API_KEYS[key_idx])
         try:
             model = genai.GenerativeModel(
-                model_name="gemini-3.1-flash-lite",
+                model_name="gemini-3.1-flash-lite-preview",
                 system_instruction=SYSTEM_INSTRUCTION,
                 generation_config=genai.GenerationConfig(temperature=0.4)
             )
@@ -167,7 +167,7 @@ def call_gemini(user_text, current_mode):
                 errors.append(str(e))
                 continue
             return f"⚠️ API Error: {e}"
-    return f"⚠️ Rate limited on all API keys. Please wait a minute and try again."
+    return f"⚠️ Rate limited on all API keys. Last error: {errors[-1][:200] if errors else 'unknown'}"
 
 def _assemble_structured_input(students, pronouns):
     """Convert structured form data into API-safe text with index placeholders.
@@ -610,5 +610,5 @@ if st.session_state.accuracy_result:
     st.write(st.session_state.accuracy_result)
 
 st.divider()
-st.caption("Powered by Gemini 3.1 Flash Lite | Framework: Singapore MOE 21CC / BLGPS")
+st.caption("Powered by Gemini 3.1 Flash Lite Preview | Framework: Singapore MOE 21CC / BLGPS")
 
