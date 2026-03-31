@@ -150,7 +150,7 @@ def call_gemini(user_text, current_mode):
         genai.configure(api_key=API_KEYS[key_idx])
         try:
             model = genai.GenerativeModel(
-                model_name="gemini-2.0-flash",
+                model_name="gemini-3.1-flash-lite",
                 system_instruction=SYSTEM_INSTRUCTION,
                 generation_config=genai.GenerationConfig(temperature=0.4)
             )
@@ -610,5 +610,5 @@ if st.session_state.accuracy_result:
     st.write(st.session_state.accuracy_result)
 
 st.divider()
-st.caption("Powered by Gemini 2.0 Flash | Framework: Singapore MOE 21CC / BLGPS")
+st.caption("Powered by Gemini 3.1 Flash Lite | Framework: Singapore MOE 21CC / BLGPS")
 
