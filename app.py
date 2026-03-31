@@ -2,8 +2,6 @@ import streamlit as st
 import google.generativeai as genai
 import os
 import re
-import csv
-import io
 
 # --- API CONFIGURATION ---
 API_KEY = os.environ.get("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY", "")
@@ -153,7 +151,10 @@ def call_gemini(user_text, current_mode):
         chat = model.start_chat(history=_build_history(current_mode))
         formatted_input = f"CURRENT MODE: {current_mode}\n\nUSER INPUT: {user_text}"
         response = chat.send_message(formatted_input)
-        return response.text
+        text = response.text
+        # Ensure the footer note is clearly separated by a paragraph break
+        text = re.sub(r'(?<!\n)\n(\*{0,2}Note that)', r'\n\n\1', text)
+        return text
     except Exception as e:
         return f"⚠️ API Error: {e}"
 
@@ -185,28 +186,15 @@ def _restore_names(text, name_map):
         text = re.sub(r'\b' + re.escape(idx) + r'\b', name, text)
     return text
 
-def _remarks_to_csv(text, name_map=None):
-    """Parse generated remarks into CSV with Student Identifier and Remark columns."""
-    buf = io.StringIO()
-    writer = csv.writer(buf)
-    writer.writerow(["Student Identifier", "Remark"])
+def _remarks_to_txt(text):
+    """Return remarks as plain text for download, excluding the footer note."""
     paragraphs = [p.strip() for p in re.split(r'\n{2,}', text) if p.strip()]
+    cleaned = []
     for para in paragraphs:
         if para.startswith("**Note") or para.startswith("Note that"):
             continue
-        identifier = "\u2014"
-        if name_map:
-            for name in name_map.values():
-                if name in para:
-                    identifier = name
-                    break
-        if identifier == "\u2014":
-            first_part = para.split('.')[0] if '.' in para else para[:80]
-            match = re.search(r'\b(\d{1,2})\b', first_part)
-            if match:
-                identifier = match.group(1).zfill(2)
-        writer.writerow([identifier, para])
-    return buf.getvalue()
+        cleaned.append(para)
+    return "\n\n".join(cleaned)
 
 # --- STREAMLIT UI ---
 st.set_page_config(page_title="Teacher Remark Assistant", layout="wide")
@@ -332,8 +320,7 @@ if "analysis_result" not in st.session_state:
 if "accuracy_result" not in st.session_state:
     st.session_state.accuracy_result = ""
 
-st.title("🇸🇬 Student Remark Generator")
-st.markdown("Automated academic progress remarks based on Singapore 21CC and BLGPS frameworks.")
+st.markdown("<h1 style='color: #f59e0b !important;'>🇸🇬 Student Remarks Assistant</h1>", unsafe_allow_html=True)
 
 # Sidebar
 with st.sidebar:
@@ -415,8 +402,8 @@ if st.session_state.last_remarks:
     st.divider()
     st.markdown("### Generated Remarks")
     st.write(st.session_state.last_remarks)
-    csv_data = _remarks_to_csv(st.session_state.last_remarks, st.session_state.name_map)
-    st.download_button("📥 Download CSV", csv_data, file_name="student_remarks.csv", mime="text/csv")
+    txt_data = _remarks_to_txt(st.session_state.last_remarks)
+    st.download_button("📥 Download TXT", txt_data, file_name="student_remarks.txt", mime="text/plain")
     with st.expander("📋 Copy raw text"):
         st.code(st.session_state.last_remarks, language=None)
 
@@ -467,3 +454,4 @@ if st.session_state.accuracy_result:
 
 st.divider()
 st.caption("Powered by Gemini 2.5 Flash | Framework: Singapore MOE 21CC / BLGPS")
+
