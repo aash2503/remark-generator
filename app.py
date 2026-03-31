@@ -46,7 +46,7 @@ Descriptors: hardworking, personable, outgoing, responsible, good leader, kind, 
 Compassionate Contributor: Works cooperatively with harmony, adopts care and integrity in daily interactions, demonstrates respect in communication and action, contributes to community through responsibility and resilience, shows civic/global/cross-cultural awareness.
 Descriptors: team-player, cheerful, personable, well-liked, kind, caring.
 
-If input descriptors relate to any category, reference that category’s traits liberally.
+Reference student outcomes only when input descriptors naturally align. Not every remark needs a student outcome — sprinkle them in when relevant, not in every remark.
 </blgps>
 
 <21cc>
@@ -68,9 +68,9 @@ Both modes share 21CC and R3ICH lists as supplementary word banks.
 - All sentences third person EXCEPT final sentence: direct encouragement to student.
 - Positive, upbeat tone. Growth-mindset framing for improvements.
 - Parenthetical info in 2nd or 3rd sentence only.
-- Every sentence must be grounded in the student's specific descriptors. AVOID generic filler that could apply to anyone, such as: "valued member of the class", "admirable qualities", "dynamic learning environment", "contributions are always valued", "remarkable sense of awareness".
-- Reference framework traits naturally within your sentences. Do NOT use clunky phrasing like "embodies the spirit of", "demonstrates the qualities of", or "possessing the traits of". Weave the traits into observations about the student.
-- Generate fresh language for each student. Do NOT reuse phrasing from the provided examples.
+- Ground every sentence in the student's specific descriptors. Avoid filler that could apply interchangeably to any student.
+- Reference framework traits naturally. Vary how you introduce them — do not default to the same formulaic phrase in every remark.
+- Vary language across students. Students with different descriptors must receive meaningfully different remarks.
 - You MUST wrap any extrapolated actions or specific examples not explicitly found in the input descriptors in single asterisks (*like this*). Do NOT italicize direct synonyms or close paraphrases. Example: input "hardworking" → "diligent" is a synonym (no asterisks), but "meticulous in completing assignments" is an extrapolation (*meticulous in completing assignments*).
 
 Required Footer:
@@ -79,32 +79,46 @@ Required Footer:
 </formatting_constraints>
 """
 
-# --- FEW-SHOT EXEMPLARS (fed as conversation history) ---
+# --- FEW-SHOT EXEMPLARS (18 vetted, fed as conversation history) ---
 EXEMPLARS = [
-    # she/her — Compassionate Contributor, score 4, simple
-    ("she/her 01 softspoken compassionate 4", "01 is a soft-spoken and kind-hearted student. Possessing the traits of a compassionate contributor, she consistently shows care and empathy in her interactions with her peers. Her *gentle disposition* and *sincerity* are admirable qualities that create a positive and harmonious classroom environment. She is a valued member of the class. Keep up the wonderful attitude, 01!"),
-    # she/her — Confident Learner, score 4, parenthetical improvement
-    ("she/her 02 cheerful participative (can be more consistent in attendance) 4", "A cheerful and participative student, 02 brings *a great deal of positive energy* to the classroom. She *engages readily in discussions and group activities*, demonstrating the qualities of a confident learner. Her contributions are always valued by her peers and teachers alike. She is encouraged to maintain consistent attendance to maximise her learning opportunities. You are on the right track, 02!"),
-    # she/her — Compassionate Contributor, score 5, many descriptors
-    ("she/her 03 responsible compassionate considerate observant 5", "03 is a responsible and compassionate student who demonstrates a remarkable sense of awareness. As a compassionate contributor, she is considerate of the needs of others and is always observant, *often being the first to offer assistance*. Her *integrity* and strong sense of responsibility make her a trusted and *respected role model* in class. We are very proud of you, 03!"),
-    # she/her — Curious Thinker, score 5 — DEMONSTRATES ASTERISK FORMATTING
-    ("she/her 05 diligent bright driven 5", "05 is a diligent and bright student with a remarkable drive to succeed. A curious thinker, she approaches her work with *meticulous care* and is consistently self-motivated to produce work of the highest quality. Her *inquisitive nature* and inventive thinking allow her to grasp complex concepts with ease and to excel in her studies. Well done, 05!"),
-    # she/her — Confident Learner, score 4, parenthetical improvement
-    ("she/her 16 dependable reserved (speak up more) 4", "16 is a dependable student with a *thoughtful* and reserved nature. *Her work is always completed with care*, showing a strong sense of *responsibility*. To further develop her communication skills as a confident learner, she is encouraged to share her *insightful ideas* more frequently during class discussions. Her perspective is valuable. You can do it, 16!"),
-    # she/her — Confident Learner, score 5, model student
-    ("she/her 18 dependable model student driven sincere 5", "18 truly exemplifies what it means to be a model student. She is a driven and sincere individual who is exceptionally dependable. As a confident learner, her *integrity* and *commitment to excellence* are evident in all she does, *inspiring her peers to also strive for their best*. She consistently demonstrates *responsibility* and a strong work ethic. We are proud of you, 18!"),
-    # he/him — Confident Learner, score 4, simple
-    ("he/him 20 reliable dependable hardworking 4", "20 is a reliable and dependable student who approaches his studies with a commendable work ethic. He *takes responsibility for his learning* and can always be trusted to *complete his tasks diligently*. His *consistency and commitment* are the hallmarks of a confident learner, and these traits will serve him well as he continues to progress. Keep up the great work, 20!"),
-    # he/him — Compassionate Contributor, score 5, many descriptors
-    ("he/him 23 trustworthy reliable dependable helpful sincere 5", "23 is an exceptionally trustworthy and reliable student. His *integrity is beyond reproach*, and he is a sincere and helpful member of the class. As a compassionate contributor, he can always be depended upon to *assist his peers and teachers*, demonstrating a strong sense of *responsibility* and care for *his community*. It is a joy to have him in class. Well done, 23!"),
-    # he/him — Curious Thinker, score 3, parenthetical improvement
-    ("he/him 25 bright outspoken (can work harder) 3", "25 is a bright and outspoken student who is *confident in sharing his ideas*. His willingness to speak up shows great potential for *communication and leadership*. He can unlock his full capabilities as a curious thinker by applying himself more consistently to his studies and *channelling his intelligence into diligent work*. Continue to work hard, 25!"),
-    # he/him — Confident Learner + Compassionate Contributor, score 5, leadership
-    ("he/him 34 reliable good leader compassionate 5", "34 is a reliable and compassionate student who has demonstrated *excellent leadership qualities*. A confident learner, he takes on responsibilities with *maturity* and guides his peers with care and *respect*. His ability to *lead with empathy* makes him an effective and trusted leader, embodying the spirit of a compassionate contributor. We are very proud of you, 34!"),
-    # he/him — score 3, parenthetical improvement, needs collaboration
-    ("he/him 37 outspoken distracted (could work better with others) 3", "37 is an outspoken student with *a great deal of energy*. His willingness to voice his opinion is a strength. To grow as a learner, he would benefit from *channelling his energy into focused tasks* and developing his collaboration skills. By learning to work more *harmoniously and effectively* with his peers, he will make more positive contributions. Keep trying, 37!"),
-    # she/her — Compassionate Contributor, score 4, participative
-    ("she/her 40 easygoing friendly participative 4", "40 is an easygoing and friendly student who participates actively in class. Her *approachable nature* makes her a wonderful team member, and she embodies the spirit of a compassionate contributor. She *communicates well with her peers* and her willingness to contribute to discussions helps to create a *dynamic and collaborative learning environment*. Keep up the good work, 40!"),
+    # --- she/her exemplars ---
+    ("she/her 01 easygoing helpful participative 4",
+     "01 is an easygoing and helpful student who participates actively in all lessons. Her willingness to assist others makes her a wonderful team member, and she embodies the spirit of a compassionate contributor. She communicates well with her peers, and her active involvement helps to create a dynamic and collaborative learning environment. Keep up the good work, 01!"),
+    ("she/her 02 diligent bright driven 5",
+     "02 is a diligent and bright student with a remarkable drive to succeed. A curious thinker, she approaches her work with *meticulous care* and is consistently *self-motivated* to produce work of the highest quality. Her *inquisitive nature* and inventive thinking allow her to grasp complex concepts with ease and to excel in her studies. Well done, 02!"),
+    ("she/her 03 responsible dependable 4",
+     "03 is a responsible and dependable student who approaches her daily tasks with *a commendable work ethic*. She *takes ownership of her learning* and can always be trusted to complete her assignments diligently. Her *consistency and commitment* are the hallmarks of a confident learner, and these traits will serve her well as she continues to progress. Keep up the great work, 03!"),
+    ("she/her 04 resilient well-liked compassionate 4",
+     "04 is a resilient and well-liked student who shows great compassion toward others. She *navigates challenges with a positive mindset*, always looking for ways to support her peers. Her *kind-hearted nature* and *ability to build strong relationships* make her a valued member of our class. You are doing a wonderful job, 04!"),
+    ("she/her 05 softspoken sincere kind 4",
+     "05 is a soft-spoken, sincere, and kind student. She consistently demonstrates care for her classmates, *often going out of her way to offer a helping hand*. Her *gentle presence adds a sense of calm* to our classroom, and her sincerity is appreciated by everyone. Continue to be your kind and thoughtful self, 05!"),
+    ("she/her 06 cheerful resilient confident 4",
+     "06 is a cheerful and resilient student who displays a great deal of confidence. She *tackles new challenges with enthusiasm*, and her positive outlook helps her to overcome any obstacles she faces. Her *ability to remain upbeat even during difficult tasks* is a testament to her character. Keep shining and believing in yourself, 06!"),
+    ("she/her 07 easygoing friendly participative 4",
+     "07 is an easygoing and friendly student who participates actively in class. Her approachable nature makes her a wonderful team member, and she embodies the spirit of a compassionate contributor. She communicates well with her peers, and her willingness to contribute to our discussions helps to create a dynamic learning environment. Keep up the good work, 07!"),
+    ("she/her 08 well-spoken confident responsible 4",
+     "08 is a well-spoken, confident and responsible student. She is diligent and reliable and can be counted on to give her best effort in the work that she does. She gets along well with her classmates and is quick to offer a helping hand. Keep up the good work!"),
+    ("she/her 09 diligent polite (apply herself more) 3",
+     "09 is a diligent and polite student. She shows a positive learning attitude in class and takes pride in her work. She stands to grow even more by continuing to apply herself more fully when completing tasks. You can do it, 09!"),
+    ("she/her 10 respectful hardworking 4",
+     "10 is a respectful and hardworking student. She puts effort into her work, and ensures that she does her best. She works well with her classmates and is an active contributor during group and class discussions. Keep it up, 10!"),
+    # --- he/him exemplars ---
+    ("he/him 11 responsible considerate (speak up more) 4",
+     "11 is a responsible and considerate student. He is well-liked by his peers and can be relied upon to set a good example for them, too. He takes pride in his work and consistently delivers to a very high standard. He has the potential to shine even more by being even more active in class discussions and speaking up more. 11, you are a joy to teach!"),
+    ("he/him 12 kind helpful reliable (speak up more) 4",
+     "12 is a kind and helpful student. He looks out for the people around him and can be counted on by his friends and teachers to be a reliable and dependable presence in the class. He is *consistent in his work* and *continually produces output of a high standard*. He stands to grow even more by learning to speak up more confidently in class discussions. You can do it, 12!"),
+    ("he/him 13 outspoken confident (more meticulous) 4",
+     "13 is an outspoken and confident student. He takes great pride in his work and holds himself to the highest standards, always making sure that he puts in the effort needed in order to excel. He stands to shine even more if he works on being more meticulous moving forward. You can do it, 13!"),
+    ("he/him 14 good-natured dependable (managing impulsivity) 3",
+     "14 is a good-natured and dependable student. He is *eager to learn*, and is always ready to take part in class discussions. He *enjoys sharing things he has learned about with his classmates*, and offers a helping hand whenever he can. He stands to grow even more by managing his impulsivity and develop empathy for others. You can do it, 14!"),
+    ("he/him 15 hardworking determined (more forthcoming) 4",
+     "15 is a hardworking, determined student. He takes his work very seriously and always makes every effort to deliver a product of the highest quality. He is well-liked by his peers, and can grow even more by learning to be more forthcoming in class discussions. Keep it up, 15!"),
+    ("he/him 16 responsible considerate (speak up more) 4",
+     "16 is a responsible and considerate student. He is well-liked by his peers and can be relied upon to set a good example for them, too. He takes pride in his work and consistently delivers to a very high standard. He has the potential to shine even more by being even more active in class discussions and speaking up more. 16, you are a joy to teach!"),
+    ("he/him 17 personable outgoing 4",
+     "17 is a personable and outgoing student. He is always happy to share his thoughts, and can be counted on to *set a good example for his peers*. He *thinks deeply about what he observes*, and has *a strong sense of right and wrong*. Well done, 17!"),
+    ("he/him 18 responsible helpful considerate kind (speak up more) 4",
+     "18 is a responsible and helpful student. He is considerate and kind, always looking out for his peers and happy to offer a helping hand. He is respectful towards his teachers and can be relied upon to give his best effort in his learning. He is well-liked by his peers, and has the potential to grow even more by working on speaking up confidently during lessons. You can do it, 18!"),
 ]
 
 # --- APP LOGIC ---
@@ -560,5 +574,5 @@ Phrases in *italics* in the output are interpretive extrapolations beyond the in
 """)
 
 st.divider()
-st.caption("Powered by Gemini 3.1 Flash Lite Preview | Framework: Singapore MOE 21CC / BLGPS | v1.3.0")
+st.caption("Powered by Gemini 3.1 Flash Lite Preview | Framework: Singapore MOE 21CC / BLGPS | v1.4.0")
 
