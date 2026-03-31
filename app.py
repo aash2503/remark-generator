@@ -196,6 +196,10 @@ def _remarks_to_txt(text):
         cleaned.append(para)
     return "\n\n".join(cleaned)
 
+def _extract_indices(text):
+    """Extract 2+ digit student index numbers from Quick Entry input."""
+    return sorted(set(re.findall(r'\b(\d{2,})\b', text)), key=lambda x: int(x))
+
 # --- SAMPLE DATA ---
 _SAMPLE_QUICK = ("she/her 01 softspoken compassionate 4, 02 cheerful participative "
     "(can be more consistent in attendance) 4, 03 responsible compassionate "
@@ -390,6 +394,8 @@ if "analysis_result" not in st.session_state:
     st.session_state.analysis_result = ""
 if "accuracy_result" not in st.session_state:
     st.session_state.accuracy_result = ""
+if "quick_indices" not in st.session_state:
+    st.session_state.quick_indices = []
 
 st.markdown("<h1 style='color: #f59e0b !important;'>🇸🇬 Student Remarks Assistant</h1>", unsafe_allow_html=True)
 
@@ -425,6 +431,7 @@ with tab_quick:
                 st.session_state.last_remarks = res
                 st.session_state.last_input = user_data_input
                 st.session_state.name_map = {}
+                st.session_state.quick_indices = _extract_indices(user_data_input)
                 st.session_state.analysis_result = ""
                 st.session_state.accuracy_result = ""
             st.toast("✅ Remarks generated!")
@@ -482,6 +489,7 @@ with tab_names:
                 st.session_state.last_remarks = named_res
                 st.session_state.last_input = api_text
                 st.session_state.name_map = name_map
+                st.session_state.quick_indices = []
                 st.session_state.analysis_result = ""
                 st.session_state.accuracy_result = ""
             st.toast("✅ Remarks generated!")
@@ -496,6 +504,42 @@ if st.session_state.last_remarks:
                        help="Downloads the remarks as a plain text file (one paragraph per student, footer excluded).")
     with st.expander("📋 Copy raw text"):
         st.code(st.session_state.last_remarks, language=None)
+
+    # --- NAME SUBSTITUTION (Quick Entry) ---
+    if st.session_state.quick_indices:
+        with st.expander("✏️ Input Student Names", expanded=False):
+            st.caption("Map index numbers to real names — this is local, nothing is sent to AI.")
+            indices = st.session_state.quick_indices
+            cols_per_row = 4
+            for row_start in range(0, len(indices), cols_per_row):
+                row_cols = st.columns(cols_per_row)
+                for j in range(cols_per_row):
+                    pos = row_start + j
+                    if pos < len(indices):
+                        with row_cols[j]:
+                            st.text_input(f"#{indices[pos]}", key=f"qname_{indices[pos]}",
+                                          placeholder="Name")
+            if st.button("✅ Apply Names", type="primary", key="apply_names",
+                         help="Replaces index numbers with the names you entered. Pronouns are kept as-is."):
+                name_map = {}
+                for idx in indices:
+                    n = st.session_state.get(f"qname_{idx}", "").strip()
+                    if n:
+                        name_map[idx] = n
+                if name_map:
+                    st.session_state.last_remarks = _restore_names(
+                        st.session_state.last_remarks, name_map)
+                    st.session_state.name_map = name_map
+                    st.session_state.quick_indices = []
+                    if st.session_state.analysis_result:
+                        st.session_state.analysis_result = _restore_names(
+                            st.session_state.analysis_result, name_map)
+                    if st.session_state.accuracy_result:
+                        st.session_state.accuracy_result = _restore_names(
+                            st.session_state.accuracy_result, name_map)
+                    st.rerun()
+                else:
+                    st.warning("Enter at least one name to apply.")
 
 # Process Sidebar Actions
 if help_clicked:
