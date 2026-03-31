@@ -196,6 +196,75 @@ def _remarks_to_txt(text):
         cleaned.append(para)
     return "\n\n".join(cleaned)
 
+# --- SAMPLE DATA ---
+_SAMPLE_QUICK = ("she/her 01 softspoken compassionate 4, 02 cheerful participative "
+    "(can be more consistent in attendance) 4, 03 responsible compassionate "
+    "considerate observant 5, 04 easygoing helpful participative 4, "
+    "05 diligent bright driven 5, 06 responsible dependable 4, "
+    "07 holds herself to a high standard considerate model student 4, "
+    "08 hardworking sincere reliable 4, 09 hardworking dependable (quiet) 4, "
+    "10 respectful participative hardworking 4, 11 cheerful friendly confident 4, "
+    "12 softspoken hardworking 4, 13 resilient well-liked compassionate 4, "
+    "14 softspoken sincere kind 4, 15 reliable hardworking 4, "
+    "16 dependable reserved (speak up more) 4, 17 cheerful resilient confident 4, "
+    "18 dependable model student driven sincere 5, "
+    "19 compassionate caring hardworking 5, "
+    "he/him 20 reliable dependable hardworking 4, "
+    "22 friendly cheerful (can focus better) 4, "
+    "23 trustworthy reliable dependable helpful sincere 5, "
+    "24 easygoing friendly (could work better with others) 3, "
+    "25 bright outspoken (can work harder) 3, "
+    "27 hardworking considerate (could focus better) 4, "
+    "28 reliable easygoing helpful 5, 29 hardworking driven sincere 5, "
+    "30 respectful disciplined (could speak up more) 4, "
+    "31 helpful sincere (could work better with others) 4, "
+    "32 outspoken cheerful (could focus better) 3, "
+    "33 insightful inquisitive (could work better with others) 3, "
+    "34 reliable good leader compassionate 5, "
+    "35 respectful dependable (could work on confidence) 3, "
+    "36 hardworking softspoken reliable 5, "
+    "37 outspoken distracted (could work better with others) 3, "
+    "38 respectful hardworking dependable 4, "
+    "39 cheerful playful outspoken (could focus better) 3 "
+    "she/her 40 easygoing friendly participative 4")
+
+_SAMPLE_NAMES = [
+    {"name": "Aisha", "chars": "softspoken compassionate", "other": "", "rating": 4},
+    {"name": "Mei Ling", "chars": "cheerful participative", "other": "can be more consistent in attendance", "rating": 4},
+    {"name": "Priya", "chars": "responsible compassionate considerate observant", "other": "", "rating": 5},
+    {"name": "Sarah", "chars": "easygoing helpful participative", "other": "", "rating": 4},
+    {"name": "Li Wen", "chars": "diligent bright driven", "other": "", "rating": 5},
+    {"name": "Nurul", "chars": "responsible dependable", "other": "", "rating": 4},
+    {"name": "Hui Min", "chars": "holds herself to a high standard considerate model student", "other": "", "rating": 4},
+    {"name": "Kavya", "chars": "hardworking sincere reliable", "other": "", "rating": 4},
+    {"name": "Xin Yi", "chars": "hardworking dependable", "other": "quiet", "rating": 4},
+    {"name": "Farah", "chars": "respectful participative hardworking", "other": "", "rating": 4},
+    {"name": "Jia Xuan", "chars": "cheerful friendly confident", "other": "", "rating": 4},
+    {"name": "Siti", "chars": "softspoken hardworking", "other": "", "rating": 4},
+    {"name": "Annabel", "chars": "resilient well-liked compassionate", "other": "", "rating": 4},
+    {"name": "Rui En", "chars": "softspoken sincere kind", "other": "", "rating": 4},
+    {"name": "Zhi Ting", "chars": "reliable hardworking", "other": "", "rating": 4},
+    {"name": "Aisyah", "chars": "dependable reserved", "other": "speak up more", "rating": 4},
+    {"name": "Chloe", "chars": "cheerful resilient confident", "other": "", "rating": 4},
+    {"name": "Wei Xuan", "chars": "dependable model student driven sincere", "other": "", "rating": 5},
+    {"name": "Amira", "chars": "compassionate caring hardworking", "other": "", "rating": 5},
+    {"name": "Rachel", "chars": "easygoing friendly participative", "other": "", "rating": 4},
+]
+
+def _load_sample_quick():
+    st.session_state.quick_input = _SAMPLE_QUICK
+
+def _load_sample_names():
+    st.session_state.pronouns_radio = "she/her"
+    st.session_state.num_students_input = len(_SAMPLE_NAMES)
+    for i, s in enumerate(_SAMPLE_NAMES):
+        st.session_state[f"name_{i}"] = s["name"]
+        st.session_state[f"chars_{i}"] = s["chars"]
+        st.session_state[f"roles_{i}"] = ""
+        st.session_state[f"awards_{i}"] = ""
+        st.session_state[f"other_{i}"] = s.get("other", "")
+        st.session_state[f"rating_{i}"] = s["rating"]
+
 # --- STREAMLIT UI ---
 st.set_page_config(page_title="Teacher Remark Assistant", layout="wide")
 
@@ -336,9 +405,10 @@ with st.sidebar:
 tab_quick, tab_names = st.tabs(["⚡ Quick Entry", "📝 Names Enabled"])
 
 with tab_quick:
+    st.button("📋 Load Sample Data", on_click=_load_sample_quick, key="sample_quick")
     user_data_input = st.text_area("Input Student Details:",
                                    placeholder="she/her 01 responsible (Class Monitor) 5, 02 helpful 4",
-                                   height=150)
+                                   height=150, key="quick_input")
     if st.button("🚀 Generate Remarks", type="primary", key="gen_quick"):
         if user_data_input:
             with st.spinner("Generating..."):
@@ -354,8 +424,9 @@ with tab_quick:
 
 with tab_names:
     st.caption("Student names are kept private — only index placeholders are sent to the AI.")
-    pronouns = st.radio("Pronouns for this batch:", ["she/her", "he/him"], horizontal=True)
-    num_students = st.number_input("Number of students:", min_value=1, max_value=45, value=1, step=1)
+    st.button("📋 Load Sample Data", on_click=_load_sample_names, key="sample_names")
+    pronouns = st.radio("Pronouns for this batch:", ["she/her", "he/him"], horizontal=True, key="pronouns_radio")
+    num_students = st.number_input("Number of students:", min_value=1, max_value=45, value=1, step=1, key="num_students_input")
     st.caption("Rating guide: 5 = Excellent · 4 = Very Good · 3 = Good · 2 = Satisfactory · 1 = Needs Improvement")
 
     students = []
