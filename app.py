@@ -94,43 +94,29 @@ Available actions (accessible via sidebar buttons — the user does NOT type the
 
 # --- FEW-SHOT EXEMPLARS (fed as conversation history) ---
 EXEMPLARS = [
+    # she/her — Compassionate Contributor, score 4, simple
     ("she/her 01 softspoken compassionate 4", "01 is a soft-spoken and kind-hearted student. Possessing the traits of a compassionate contributor, she consistently shows care and empathy in her interactions with her peers. Her gentle disposition and sincerity are admirable qualities that create a positive and harmonious classroom environment. She is a valued member of the class. Keep up the wonderful attitude, 01!"),
+    # she/her — Confident Learner, score 4, parenthetical improvement
     ("she/her 02 cheerful participative (can be more consistent in attendance) 4", "A cheerful and participative student, 02 brings a great deal of positive energy to the classroom. She engages readily in discussions and group activities, demonstrating the qualities of a confident learner. Her contributions are always valued by her peers and teachers alike. She is encouraged to maintain consistent attendance to maximise her learning opportunities. You are on the right track, 02!"),
+    # she/her — Compassionate Contributor, score 5, many descriptors
     ("she/her 03 responsible compassionate considerate observant 5", "03 is a responsible and compassionate student who demonstrates a remarkable sense of awareness. As a compassionate contributor, she is considerate of the needs of others and is always observant, often being the first to offer assistance. Her integrity and strong sense of responsibility make her a trusted and respected role model in class. We are very proud of you, 03!"),
-    ("she/her 04 easygoing helpful participative 4", "An easygoing and helpful student, 04 is a wonderful team player. She gets along well with her peers and participates actively in class, exemplifying the collaborative spirit of a compassionate contributor. Her willingness to lend a hand and her positive attitude significantly enhance the learning environment for everyone around her. Good work, 04!"),
+    # she/her — Curious Thinker, score 5
     ("she/her 05 diligent bright driven 5", "05 is a diligent and bright student with a remarkable drive to succeed. A curious thinker, she approaches her work with meticulous care and is consistently self-motivated to produce work of the highest quality. Her inquisitive nature and inventive thinking allow her to grasp complex concepts with ease and to excel in her studies. Well done, 05!"),
-    ("she/her 06 responsible dependable 4", "A responsible and dependable student, 06 can always be counted on to complete her tasks with care and diligence. She displays a high degree of self-management and takes ownership of her learning. This sense of responsibility is a key trait of a confident learner and serves her well in all her academic pursuits. Keep it up, 06!"),
-    ("she/her 07 holds herself to a high standard considerate model student 4", "07 is a considerate and conscientious student who consistently holds herself to a high standard. She truly exemplifies what it means to be a confident learner, showing resilience and a desire for excellence in all that she does. Her exemplary behaviour and thoughtful nature make her a positive influence and a model student for her peers. Continue to work hard, 07!"),
-    ("she/her 08 hardworking sincere reliable 4", "08 is a hardworking, sincere, and reliable student. She approaches all her responsibilities with integrity and a positive attitude, making her a trustworthy member of the class. Possessing the traits of a confident learner, she perseveres through challenges and consistently puts forth her best effort in her studies. Excellent work, 08!"),
-    ("she/her 09 hardworking dependable (quiet) 4", "09 is a hardworking and dependable student who takes great pride in her work. Though she has a quiet disposition, her focus and diligence are evident in the high quality of her assignments. As a confident learner, she demonstrates resilience and a strong sense of responsibility. We are proud of her consistent efforts. You can do it, 09!"),
-    ("she/her 10 respectful participative hardworking 4", "A respectful and hardworking student, 10 is an active participant in the classroom. She shows great respect for her peers and teachers and contributes thoughtfully during class discussions. Her dedication and collaborative spirit are the hallmarks of a confident learner, and she is always willing to put in the effort to achieve her goals. Keep up the good work, 10!"),
-    ("she/her 11 cheerful friendly confident 4", "11 is a cheerful, friendly, and confident student. Her positive disposition and ability to manage relationships effectively make her a well-liked member of the class. As a confident learner, she is not afraid to take on new challenges and actively engages with her learning. Her bright personality is a joy to have in class. Well done, 11!"),
-    ("she/her 12 softspoken hardworking 4", "12 is a soft-spoken and hardworking student who demonstrates great focus in her studies. A confident learner, she is diligent and meticulous in completing her assignments, always striving to do her best. Her quiet determination and resilience are admirable qualities that will undoubtedly lead her to continued success in her learning journey. Keep it up, 12!"),
-    ("she/her 13 resilient well-liked compassionate 4", "13 is a resilient and compassionate student who is well-liked by her peers. She exemplifies the qualities of a compassionate contributor, showing care for others and working harmoniously in group settings. She faces challenges with a positive attitude and perseveres, demonstrating a strong sense of self-management and determination. Good work, 13!"),
-    ("she/her 14 softspoken sincere kind 4", "A soft-spoken and sincere student, 14 is exceptionally kind to everyone she interacts with. Her gentle and caring nature reflects the core values of a compassionate contributor. She demonstrates respect and integrity in her actions, creating a warm and supportive atmosphere around her. Her thoughtful presence is deeply appreciated in the classroom. Excellent work, 14!"),
-    ("she/her 15 reliable hardworking 4", "15 is a reliable and hardworking student who can be depended upon to give her best effort. She approaches her studies with a responsible attitude, consistently completing her work to a high standard. This display of diligence and self-management are key characteristics of a confident learner, setting her up for continued progress. Keep it up, 15!"),
+    # she/her — Confident Learner, score 4, parenthetical improvement
     ("she/her 16 dependable reserved (speak up more) 4", "16 is a dependable student with a thoughtful and reserved nature. Her work is always completed with care, showing a strong sense of responsibility. To further develop her communication skills as a confident learner, she is encouraged to share her insightful ideas more frequently during class discussions. Her perspective is valuable. You can do it, 16!"),
-    ("she/her 17 cheerful resilient confident 4", "17 is a cheerful and resilient student who exudes confidence. A confident learner, she embraces challenges with a positive mindset and is not discouraged by setbacks. Her ability to self-manage and persevere is commendable. Her bright and determined spirit makes her a wonderful and inspiring presence in the classroom. Well done, 17!"),
+    # she/her — Confident Learner, score 5, model student
     ("she/her 18 dependable model student driven sincere 5", "18 truly exemplifies what it means to be a model student. She is a driven and sincere individual who is exceptionally dependable. As a confident learner, her integrity and commitment to excellence are evident in all she does, inspiring her peers to also strive for their best. She consistently demonstrates responsibility and a strong work ethic. We are proud of you, 18!"),
-    ("she/her 19 compassionate caring hardworking 5", "19 is a compassionate and hardworking student. Possessing the qualities of a compassionate contributor, her caring nature is evident in her daily interactions, where she is always ready to offer help and support to her peers. This empathy, combined with her diligent approach to her studies, makes her a truly well-rounded and admirable individual. Excellent work, 19!"),
+    # he/him — Confident Learner, score 4, simple
     ("he/him 20 reliable dependable hardworking 4", "20 is a reliable and dependable student who approaches his studies with a commendable work ethic. He takes responsibility for his learning and can always be trusted to complete his tasks diligently. His consistency and commitment are the hallmarks of a confident learner, and these traits will serve him well as he continues to progress. Keep up the great work, 20!"),
-    ("he/him 22 friendly cheerful (can focus better) 4", "A friendly and cheerful student, 22 brings a great deal of positive energy to the classroom. His outgoing nature allows him to interact well with his peers. He is a compassionate contributor who adds to the harmony of the class. He has the potential to achieve even more by channeling his enthusiasm into a sustained focus during lessons. You can do it, 22!"),
+    # he/him — Compassionate Contributor, score 5, many descriptors
     ("he/him 23 trustworthy reliable dependable helpful sincere 5", "23 is an exceptionally trustworthy and reliable student. His integrity is beyond reproach, and he is a sincere and helpful member of the class. As a compassionate contributor, he can always be depended upon to assist his peers and teachers, demonstrating a strong sense of responsibility and care for his community. It is a joy to have him in class. Well done, 23!"),
-    ("he/him 24 easygoing friendly (could work better with others) 3", "An easygoing and friendly student, 24 gets along well with his classmates on a personal level. He brings a pleasant and calm demeanor to the classroom. To grow further as a compassionate contributor, he is encouraged to develop his collaboration skills and work more effectively within a team setting to achieve shared goals. You are on the right track, 24!"),
+    # he/him — Curious Thinker, score 3, parenthetical improvement
     ("he/him 25 bright outspoken (can work harder) 3", "25 is a bright and outspoken student who is confident in sharing his ideas. His willingness to speak up shows great potential for communication and leadership. He can unlock his full capabilities as a curious thinker by applying himself more consistently to his studies and channelling his intelligence into diligent work. Continue to work hard, 25!"),
-    ("he/him 27 hardworking considerate (could focus better) 4", "27 is a hardworking and considerate student who is always mindful of others. As a compassionate contributor, his thoughtfulness is greatly appreciated by his peers. He shows diligence in his work and is capable of producing excellent results. By improving his ability to focus during lessons, he will be able to perform even better. Keep it up, 27!"),
-    ("he/him 28 reliable easygoing helpful 5", "28 is a reliable, easygoing, and helpful student. He is a shining example of a compassionate contributor, always willing to lend a hand to his teachers and peers without hesitation. His responsible and caring attitude contributes significantly to a positive and harmonious classroom environment, making him a valued member of the class. Excellent work, 28!"),
-    ("he/him 29 hardworking driven sincere 5", "29 is a hardworking and driven student who approaches his studies with sincerity and focus. A confident learner, he is self-motivated and determined to achieve his best, demonstrating great resilience and integrity in his work. His strong work ethic and commitment to personal growth are truly admirable qualities that set a fine example for others. Well done, 29!"),
-    ("he/him 30 respectful disciplined (could speak up more) 4", "30 is a respectful and disciplined student whose behaviour is commendable. He demonstrates a high degree of self-management in his actions and conduct. To continue his development as a confident learner, he is encouraged to build his confidence and share his valuable thoughts more often during class, as his perspective would enrich discussions. You can do it, 30!"),
-    ("he/him 31 helpful sincere (could work better with others) 4", "31 is a helpful and sincere student with a kind disposition. He demonstrates the qualities of a compassionate contributor through his willingness to assist others. He stands to grow even more by enhancing his collaboration skills and learning to work more cohesively with his peers in group settings to achieve common objectives. Keep up the effort, 31!"),
-    ("he/him 32 outspoken cheerful (could focus better) 3", "An outspoken and cheerful student, 32 is never hesitant to share his thoughts. His energy is a positive asset in the classroom. He is encouraged to practice greater self-management by focusing his attention more consistently during instruction, which will help him better harness his natural enthusiasm for learning and achieve greater success. You are on the right track, 32!"),
-    ("he/him 33 insightful inquisitive (could work better with others) 3", "33 is an insightful and inquisitive student who thinks deeply about his learning. Possessing the traits of a curious thinker, he often has unique perspectives to offer. He can further develop his collaboration and communication skills by learning to integrate his ideas more effectively with those of his teammates during group work. Keep working at it, 33!"),
+    # he/him — Confident Learner + Compassionate Contributor, score 5, leadership
     ("he/him 34 reliable good leader compassionate 5", "34 is a reliable and compassionate student who has demonstrated excellent leadership qualities. A confident learner, he takes on responsibilities with maturity and guides his peers with care and respect. His ability to lead with empathy makes him an effective and trusted leader, embodying the spirit of a compassionate contributor. We are very proud of you, 34!"),
-    ("he/him 35 respectful dependable (could work on confidence) 3", "A respectful and dependable student, 35 consistently shows a responsible attitude towards his duties. His polite and reliable nature is appreciated by all. To continue his growth as a confident learner, he is encouraged to believe more in his own abilities and step out of his comfort zone, as this will help build his self-confidence. You can do it, 35!"),
-    ("he/him 36 hardworking softspoken reliable 5", "36 is a hardworking and reliable student. A confident learner, he completes all his work with diligence and a quiet determination that is truly admirable. Though he is soft-spoken, his commitment and strong sense of responsibility are evident in the consistent high quality of his work. His efforts are a shining example to his peers. Excellent work, 36!"),
+    # he/him — score 3, parenthetical improvement, needs collaboration
     ("he/him 37 outspoken distracted (could work better with others) 3", "37 is an outspoken student with a great deal of energy. His willingness to voice his opinion is a strength. To grow as a learner, he would benefit from channelling his energy into focused tasks and developing his collaboration skills. By learning to work more harmoniously and effectively with his peers, he will make more positive contributions. Keep trying, 37!"),
-    ("he/him 38 respectful hardworking dependable 4", "38 is a respectful, hardworking, and dependable student. He consistently demonstrates the core values of responsibility and resilience in his approach to his studies. As a confident learner, he can be counted on to complete his work diligently and to the best of his ability, making him a reliable and trusted member of the class. Good work, 38!"),
-    ("he/him 39 cheerful playful outspoken (could focus better) 3", "39 is a cheerful and playful student who is confident and outspoken. He brings a lot of vibrant energy to the class. His next step in his development is to practice self-management by improving his focus during lessons. By doing so, he can better apply his bright and energetic personality towards his academic goals. You are on the right track, 39!"),
+    # she/her — Compassionate Contributor, score 4, participative
     ("she/her 40 easygoing friendly participative 4", "40 is an easygoing and friendly student who participates actively in class. Her approachable nature makes her a wonderful team member, and she embodies the spirit of a compassionate contributor. She communicates well with her peers and her willingness to contribute to discussions helps to create a dynamic and collaborative learning environment. Keep up the good work, 40!"),
 ]
 
@@ -403,8 +389,6 @@ if "name_map" not in st.session_state:
     st.session_state.name_map = {}
 if "quick_indices" not in st.session_state:
     st.session_state.quick_indices = []
-if "guide_result" not in st.session_state:
-    st.session_state.guide_result = ""
 if "_key_idx" not in st.session_state:
     st.session_state["_key_idx"] = 0
 
@@ -445,34 +429,34 @@ with tab_quick:
             st.error("Please enter student data.")
 
 with tab_names:
-    st.caption("Student names are kept private — only index placeholders are sent to the AI.")
+    st.caption("🔒 Student names are kept private — only index placeholders are sent to the AI.")
     st.button("📋 Load Sample Data", on_click=_load_sample_names, key="sample_names",
-              help="Fills in 20 sample she/her students with placeholder names and descriptors for testing.")
+              help="Fills in 20 sample she/her students with placeholder names and descriptors for testing. Use this to see how the Names Enabled workflow works before entering real data.")
     pronouns = st.radio("Pronouns for this batch:", ["she/her", "he/him"], horizontal=True, key="pronouns_radio",
-                        help="All students in this batch will use the selected pronouns. Submit separate batches for different pronoun groups.")
+                        help="All students in this batch share the same pronouns. To mix pronouns, generate one batch with she/her and another with he/him, then combine the results.")
     num_students = st.number_input("Number of students:", min_value=1, max_value=45, value=1, step=1, key="num_students_input",
-                                   help="Set the number of students to generate remarks for. An entry form will appear for each student.")
+                                   help="How many students in this batch? Each gets their own entry form below. For a typical class of 40, you may want to split into two batches by pronoun.")
     st.caption("Rating guide: 5 = Excellent · 4 = Very Good · 3 = Good · 2 = Satisfactory · 1 = Needs Improvement")
 
     students = []
     for i in range(int(num_students)):
         with st.expander(f"Student {i + 1}", expanded=(i == 0)):
             name = st.text_input("Name", key=f"name_{i}", placeholder="e.g. Wei Lin",
-                               help="Student's real name. This is kept private and never sent to the AI — it will be swapped back into the final output.")
+                               help="Student's real name — kept 100% private, never sent to the AI. The name is replaced with an index placeholder (e.g. S01) before the API call, then swapped back into the final output on your device.")
             characteristics = st.text_input("Characteristics / Descriptors", key=f"chars_{i}",
-                                            placeholder="e.g. cheerful, responsible, hardworking",
-                                            help="Space-separated descriptors of the student's conduct and disposition. These drive the content of the remark.")
+                                            placeholder="e.g. cheerful responsible hardworking",
+                                            help="Space-separated traits that describe this student's conduct and character. Examples: softspoken, compassionate, diligent, bright, resilient, well-liked, participative. These are the primary drivers of the remark content. Use 2–5 descriptors for best results.")
             roles = st.text_input("Class / Leadership Roles (optional)", key=f"roles_{i}",
                                   placeholder="e.g. Class Monitor, Prefect",
-                                  help="Any leadership positions or class roles held by the student. These are woven into the remark.")
+                                  help="Leadership positions or class duties. These are mentioned in the remark as evidence of responsibility or confidence. Leave blank if none.")
             awards = st.text_input("Awards (optional)", key=f"awards_{i}",
                                    placeholder="e.g. Good Progress Award",
-                                   help="Any awards or recognitions the student has received this semester.")
+                                   help="Awards or recognitions received this semester. Woven into the remark as an achievement. Leave blank if none.")
             other = st.text_input("Other Information (optional)", key=f"other_{i}",
                                   placeholder="e.g. frequent latecoming, can focus better",
-                                  help="Areas for improvement or additional context. These are phrased gently and positively in the remark.")
+                                  help="Areas for improvement or extra context. The AI phrases these gently and positively (e.g. 'can focus better' becomes 'is encouraged to improve focus'). Leave blank if purely positive.")
             rating = st.selectbox("Behaviour Rating", options=[5, 4, 3, 2, 1], key=f"rating_{i}",
-                                  help="5 = Excellent conduct, 1 = Needs significant improvement")
+                                  help="Controls how effusive the remark is. 5 = Excellent (most praise, ~75 words), 4 = Very Good, 3 = Good (balanced, includes growth areas), 2 = Satisfactory, 1 = Needs Improvement.")
             students.append({
                 "name": name.strip(),
                 "characteristics": characteristics.strip(),
@@ -503,10 +487,25 @@ if st.session_state.last_remarks:
     st.divider()
     st.markdown("### Generated Remarks")
     st.write(st.session_state.last_remarks)
+
+    # Per-remark copy buttons
+    remarks_text = st.session_state.last_remarks
+    paragraphs = [p.strip() for p in re.split(r'\n{2,}', remarks_text) if p.strip()]
+    remark_paragraphs = [p for p in paragraphs if not (p.startswith("**Note") or p.startswith("Note that"))]
+    if len(remark_paragraphs) > 1:
+        with st.expander("📋 Copy individual remarks"):
+            for i, remark in enumerate(remark_paragraphs):
+                label = remark[:40].rstrip() + "..." if len(remark) > 40 else remark
+                st.code(remark, language=None)
+
     txt_data = _remarks_to_txt(st.session_state.last_remarks)
-    st.download_button("📥 Download TXT", txt_data, file_name="student_remarks.txt", mime="text/plain",
-                       help="Downloads the remarks as a plain text file (one paragraph per student, footer excluded).")
-    with st.expander("📋 Copy raw text"):
+    col_dl, col_count = st.columns([1, 3])
+    with col_dl:
+        st.download_button("📥 Download TXT", txt_data, file_name="student_remarks.txt", mime="text/plain",
+                           help="Downloads the remarks as a plain text file (one paragraph per student, footer excluded).")
+    with col_count:
+        st.caption(f"{len(remark_paragraphs)} remark(s) generated")
+    with st.expander("📋 Copy all raw text"):
         st.code(st.session_state.last_remarks, language=None)
 
     # --- NAME SUBSTITUTION (Quick Entry) ---
@@ -541,16 +540,37 @@ if st.session_state.last_remarks:
 
 # Process Sidebar Actions
 if help_clicked:
-    if not st.session_state.guide_result:
-        with st.spinner("Loading guide..."):
-            st.session_state.guide_result = call_gemini(
-                "Display the full usage guide for this app, explaining the input format, modes, and available sidebar buttons.",
-                mode_selection)
-
-if st.session_state.guide_result:
     st.divider()
     st.markdown("### 📖 Usage Guide")
-    st.info(st.session_state.guide_result)
+    st.info("""
+**Input Format (Quick Entry)**
+
+Start with pronouns (`she/her` or `he/him`), then for each student provide:
+- **Index number** (e.g. 01, 02)
+- **Descriptors** — space-separated traits (e.g. `responsible hardworking cheerful`)
+- **Parenthetical info** *(optional)* — roles, awards, or areas for improvement (e.g. `(Class Monitor)`, `(can focus better)`)
+- **Conduct score** — 1 to 5 (5 = Excellent)
+
+Separate students with commas. Switch pronouns mid-input by writing the new pronoun before the next student.
+
+**Example:**
+`she/her 01 responsible hardworking (Class Monitor) 5, 02 cheerful friendly 4, he/him 03 bright outspoken (can work harder) 3`
+
+**Modes**
+- **BLGPS Mode** — maps to Curious Thinker / Confident Learner / Compassionate Contributor framework
+- **21CC Mode** — maps to MOE Singapore's 21st Century Competencies, R3ICH values, and social-emotional competencies
+
+**Names Enabled Tab**
+Use the structured form to enter student names privately — names never leave your browser and are swapped into the output locally.
+
+**Italicized Phrases**
+Phrases in *italics* in the output are interpretive extrapolations beyond the input descriptors. Review these for accuracy before finalising.
+
+**After Generating**
+- Download remarks as a TXT file
+- Copy individual remarks or the full raw text
+- In Quick Entry, use "Input Student Names" to map index numbers to real names locally
+""")
 
 st.divider()
 st.caption("Powered by Gemini 3.1 Flash Lite Preview | Framework: Singapore MOE 21CC / BLGPS")
