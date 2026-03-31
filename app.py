@@ -77,19 +77,19 @@ In certain cases, the descriptors may be followed by parentheses which provide a
 
 Responses should vary sentence structure actively and ensure that phrasing is positive and upbeat. Only the very last line of the comment should be talking to the student directly. Responses should not be fewer than 55 words, and can be up to 75 words. 
 
+IMPORTANT — Italicize inaccuracies: In every remark you generate, italicize (using single asterisks *like this*) any phrase that is an interpretive extrapolation beyond what the input descriptors directly state. These are areas the teacher should double-check. For example, if the input says "hardworking" and you write "meticulous in completing assignments", italicize "meticulous in completing assignments" because the input did not explicitly state that. Do NOT italicize phrases that directly restate or closely paraphrase the input descriptors.
+
 Required Footer:
-- If 21CC mode: **Note that the output from here is a first draft, and will always require editing as the AI is not capable of producing flawlessly accurate output. You may consider using the "Italicize Inaccuracies" button in the sidebar to kickstart your editing process.**
-- If BLGPS mode: **Note that the output from here is a first draft, and will always require editing as the AI is not capable of producing flawlessly accurate output. Pay special attention to whether the descriptors match the BLGPS student outcome mentioned in the remark, if any. You may consider using the "Italicize Inaccuracies" button in the sidebar to kickstart your editing process.**
+- If 21CC mode: **Note that the output from here is a first draft, and will always require editing as the AI is not capable of producing flawlessly accurate output. Italicized phrases are interpretive and should be reviewed for accuracy.**
+- If BLGPS mode: **Note that the output from here is a first draft, and will always require editing as the AI is not capable of producing flawlessly accurate output. Pay special attention to whether the descriptors match the BLGPS student outcome mentioned in the remark, if any. Italicized phrases are interpretive and should be reviewed for accuracy.**
 
 Available actions (accessible via sidebar buttons — the user does NOT type these as commands):
 - "Guide / Instructions" button: When the user triggers this, display a clear usage guide explaining:
   1. Input format: start with pronouns (she/her or he/him), then for each student provide their index number, descriptors (space-separated), optional parenthetical info, and a conduct score 1-5.
   2. Example: she/her 01 responsible hardworking (Class Monitor) 5, 02 cheerful friendly 4
   3. The two modes available: BLGPS Mode and 21CC Mode, selectable in the sidebar.
-  4. After generating, use the sidebar buttons: "Analyse Class Data" for a competency breakdown table, and "Italicize Inaccuracies" to highlight areas that may need editing.
+  4. Italicized phrases in the output are interpretive extrapolations that the teacher should double-check for accuracy.
   5. The app also supports a "Names Enabled" input mode where teachers can enter student names in a structured form — names are kept private and never sent to the AI.
-- "Analyse Class Data" button: Provide a breakdown of competencies/values used in the remarks in table format.
-- "Italicize Inaccuracies" button: Repeat the remarks verbatim but italicize areas that are likely candidates for inaccuracy or that the teacher should double-check.
 """
 
 # --- FEW-SHOT EXEMPLARS (fed as conversation history) ---
@@ -401,10 +401,6 @@ if "last_input" not in st.session_state:
     st.session_state.last_input = ""
 if "name_map" not in st.session_state:
     st.session_state.name_map = {}
-if "analysis_result" not in st.session_state:
-    st.session_state.analysis_result = ""
-if "accuracy_result" not in st.session_state:
-    st.session_state.accuracy_result = ""
 if "quick_indices" not in st.session_state:
     st.session_state.quick_indices = []
 if "guide_result" not in st.session_state:
@@ -423,10 +419,7 @@ with st.sidebar:
     st.subheader("Special Actions")
     help_clicked = st.button("📖 Guide / Instructions",
                              help="Shows a full usage guide: input format, modes, and features.")
-    analyse_clicked = st.button("📊 Analyse Class Data",
-                                help="Generates a table breaking down which competencies and values were used in the remarks.")
-    accuracy_clicked = st.button("🔍 Italicize Inaccuracies",
-                                 help="Repeats the remarks verbatim but italicizes phrases the teacher should double-check for accuracy.")
+    st.caption("ℹ️ Italicized phrases in generated remarks are interpretive — review them for accuracy.")
 
 # --- INPUT AREA (Tabs) ---
 tab_quick, tab_names = st.tabs(["⚡ Quick Entry", "📝 Names Enabled"])
@@ -447,8 +440,6 @@ with tab_quick:
                 st.session_state.last_input = user_data_input
                 st.session_state.name_map = {}
                 st.session_state.quick_indices = _extract_indices(user_data_input)
-                st.session_state.analysis_result = ""
-                st.session_state.accuracy_result = ""
             st.toast("✅ Remarks generated!")
         else:
             st.error("Please enter student data.")
@@ -505,8 +496,6 @@ with tab_names:
                 st.session_state.last_input = api_text
                 st.session_state.name_map = name_map
                 st.session_state.quick_indices = []
-                st.session_state.analysis_result = ""
-                st.session_state.accuracy_result = ""
             st.toast("✅ Remarks generated!")
 
 # --- PERSISTENT OUTPUT ---
@@ -546,12 +535,6 @@ if st.session_state.last_remarks:
                         st.session_state.last_remarks, name_map)
                     st.session_state.name_map = name_map
                     st.session_state.quick_indices = []
-                    if st.session_state.analysis_result:
-                        st.session_state.analysis_result = _restore_names(
-                            st.session_state.analysis_result, name_map)
-                    if st.session_state.accuracy_result:
-                        st.session_state.accuracy_result = _restore_names(
-                            st.session_state.accuracy_result, name_map)
                     st.rerun()
                 else:
                     st.warning("Enter at least one name to apply.")
@@ -568,46 +551,6 @@ if st.session_state.guide_result:
     st.divider()
     st.markdown("### 📖 Usage Guide")
     st.info(st.session_state.guide_result)
-
-if analyse_clicked:
-    if st.session_state.last_remarks:
-        with st.spinner("Analysing..."):
-            sanitized_remarks = st.session_state.last_remarks
-            if st.session_state.name_map:
-                for idx, name in st.session_state.name_map.items():
-                    sanitized_remarks = sanitized_remarks.replace(name, idx)
-            context = f"Here are the remarks I previously generated based on this input:\n\nINPUT: {st.session_state.last_input}\n\nREMARKS:\n{sanitized_remarks}\n\nNow analyse these remarks: provide a breakdown of competencies/values in table format."
-            res = call_gemini(context, mode_selection)
-            if st.session_state.name_map:
-                res = _restore_names(res, st.session_state.name_map)
-            st.session_state.analysis_result = res
-    else:
-        st.warning("Generate remarks first before analysing.")
-
-if accuracy_clicked:
-    if st.session_state.last_remarks:
-        with st.spinner("Checking accuracy..."):
-            sanitized_remarks = st.session_state.last_remarks
-            if st.session_state.name_map:
-                for idx, name in st.session_state.name_map.items():
-                    sanitized_remarks = sanitized_remarks.replace(name, idx)
-            context = f"Here are the remarks I previously generated based on this input:\n\nINPUT: {st.session_state.last_input}\n\nREMARKS:\n{sanitized_remarks}\n\nNow repeat the remarks verbatim but italicize areas likely for inaccuracy."
-            res = call_gemini(context, mode_selection)
-            if st.session_state.name_map:
-                res = _restore_names(res, st.session_state.name_map)
-            st.session_state.accuracy_result = res
-    else:
-        st.warning("Generate remarks first before checking accuracy.")
-
-if st.session_state.analysis_result:
-    st.divider()
-    st.markdown("### 📊 Class Data Analysis")
-    st.write(st.session_state.analysis_result)
-
-if st.session_state.accuracy_result:
-    st.divider()
-    st.markdown("### 🔍 Accuracy Check")
-    st.write(st.session_state.accuracy_result)
 
 st.divider()
 st.caption("Powered by Gemini 3.1 Flash Lite Preview | Framework: Singapore MOE 21CC / BLGPS")
