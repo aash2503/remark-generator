@@ -4,11 +4,13 @@ import os
 import re
 
 # --- API CONFIGURATION ---
-API_KEY = os.environ.get("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY", "")
-if not API_KEY:
+# Supports multiple comma-separated keys for rotation (triples effective daily quota)
+_raw_keys = os.environ.get("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY", "")
+API_KEYS = [k.strip() for k in _raw_keys.split(",") if k.strip()]
+if not API_KEYS:
     st.error("GEMINI_API_KEY not found. Set it as an environment variable or in .streamlit/secrets.toml")
     st.stop()
-genai.configure(api_key=API_KEY)
+genai.configure(api_key=API_KEYS[0])
 
 # --- THE COMPLETE SYSTEM INSTRUCTION ---
 SYSTEM_INSTRUCTION = """
@@ -142,21 +144,30 @@ def _build_history(mode):
     return history
 
 def call_gemini(user_text, current_mode):
-    try:
-        model = genai.GenerativeModel(
-            model_name="gemini-2.5-flash",
-            system_instruction=SYSTEM_INSTRUCTION,
-            generation_config=genai.GenerationConfig(temperature=0.4)
-        )
-        chat = model.start_chat(history=_build_history(current_mode))
-        formatted_input = f"CURRENT MODE: {current_mode}\n\nUSER INPUT: {user_text}"
-        response = chat.send_message(formatted_input)
-        text = response.text
-        # Ensure the footer note is clearly separated by a paragraph break
-        text = re.sub(r'(?<!\n)\n(\*{0,2}Note that)', r'\n\n\1', text)
-        return text
-    except Exception as e:
-        return f"⚠️ API Error: {e}"
+    errors = []
+    for attempt in range(len(API_KEYS)):
+        key_idx = (st.session_state.get("_key_idx", 0) + attempt) % len(API_KEYS)
+        genai.configure(api_key=API_KEYS[key_idx])
+        try:
+            model = genai.GenerativeModel(
+                model_name="gemini-2.0-flash",
+                system_instruction=SYSTEM_INSTRUCTION,
+                generation_config=genai.GenerationConfig(temperature=0.4)
+            )
+            chat = model.start_chat(history=_build_history(current_mode))
+            formatted_input = f"CURRENT MODE: {current_mode}\n\nUSER INPUT: {user_text}"
+            response = chat.send_message(formatted_input)
+            text = response.text
+            text = re.sub(r'(?<!\n)\n(\*{0,2}Note that)', r'\n\n\1', text)
+            # Advance round-robin for next call
+            st.session_state["_key_idx"] = (key_idx + 1) % len(API_KEYS)
+            return text
+        except Exception as e:
+            if "429" in str(e) or "rate" in str(e).lower() or "quota" in str(e).lower():
+                errors.append(str(e))
+                continue
+            return f"⚠️ API Error: {e}"
+    return f"⚠️ Rate limited on all API keys. Please wait a minute and try again."
 
 def _assemble_structured_input(students, pronouns):
     """Convert structured form data into API-safe text with index placeholders.
@@ -396,6 +407,10 @@ if "accuracy_result" not in st.session_state:
     st.session_state.accuracy_result = ""
 if "quick_indices" not in st.session_state:
     st.session_state.quick_indices = []
+if "guide_result" not in st.session_state:
+    st.session_state.guide_result = ""
+if "_key_idx" not in st.session_state:
+    st.session_state["_key_idx"] = 0
 
 st.markdown("<h1 style='color: #f59e0b !important;'>🇸🇬 Student Remarks Assistant</h1>", unsafe_allow_html=True)
 
@@ -543,8 +558,16 @@ if st.session_state.last_remarks:
 
 # Process Sidebar Actions
 if help_clicked:
-    with st.spinner("Loading guide..."):
-        st.info(call_gemini("Display the full usage guide for this app, explaining the input format, modes, and available sidebar buttons.", mode_selection))
+    if not st.session_state.guide_result:
+        with st.spinner("Loading guide..."):
+            st.session_state.guide_result = call_gemini(
+                "Display the full usage guide for this app, explaining the input format, modes, and available sidebar buttons.",
+                mode_selection)
+
+if st.session_state.guide_result:
+    st.divider()
+    st.markdown("### 📖 Usage Guide")
+    st.info(st.session_state.guide_result)
 
 if analyse_clicked:
     if st.session_state.last_remarks:
@@ -587,5 +610,5 @@ if st.session_state.accuracy_result:
     st.write(st.session_state.accuracy_result)
 
 st.divider()
-st.caption("Powered by Gemini 2.5 Flash | Framework: Singapore MOE 21CC / BLGPS")
+st.caption("Powered by Gemini 2.0 Flash | Framework: Singapore MOE 21CC / BLGPS")
 
