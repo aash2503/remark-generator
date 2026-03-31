@@ -2,6 +2,8 @@ import streamlit as st
 import google.generativeai as genai
 import os
 import re
+import csv
+import io
 
 # --- API CONFIGURATION ---
 API_KEY = os.environ.get("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY", "")
@@ -145,7 +147,8 @@ def call_gemini(user_text, current_mode):
     try:
         model = genai.GenerativeModel(
             model_name="gemini-2.5-flash",
-            system_instruction=SYSTEM_INSTRUCTION
+            system_instruction=SYSTEM_INSTRUCTION,
+            generation_config=genai.GenerationConfig(temperature=0.4)
         )
         chat = model.start_chat(history=_build_history(current_mode))
         formatted_input = f"CURRENT MODE: {current_mode}\n\nUSER INPUT: {user_text}"
@@ -182,6 +185,29 @@ def _restore_names(text, name_map):
         text = re.sub(r'\b' + re.escape(idx) + r'\b', name, text)
     return text
 
+def _remarks_to_csv(text, name_map=None):
+    """Parse generated remarks into CSV with Student Identifier and Remark columns."""
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["Student Identifier", "Remark"])
+    paragraphs = [p.strip() for p in re.split(r'\n{2,}', text) if p.strip()]
+    for para in paragraphs:
+        if para.startswith("**Note") or para.startswith("Note that"):
+            continue
+        identifier = "\u2014"
+        if name_map:
+            for name in name_map.values():
+                if name in para:
+                    identifier = name
+                    break
+        if identifier == "\u2014":
+            first_part = para.split('.')[0] if '.' in para else para[:80]
+            match = re.search(r'\b(\d{1,2})\b', first_part)
+            if match:
+                identifier = match.group(1).zfill(2)
+        writer.writerow([identifier, para])
+    return buf.getvalue()
+
 # --- STREAMLIT UI ---
 st.set_page_config(page_title="Teacher Remark Assistant", layout="wide")
 
@@ -189,7 +215,7 @@ st.set_page_config(page_title="Teacher Remark Assistant", layout="wide")
 st.markdown("""
 <style>
     /* Dark navy background */
-    .stApp { background-color: #020617; color: #e2e8f0; }
+    .stApp { background-color: #020617; color: #e2e8f0; font-family: 'Century Gothic', sans-serif; }
     
     /* Sidebar */
     section[data-testid="stSidebar"] { background-color: #0f172a; border-right: 1px solid #1e293b; }
@@ -264,6 +290,33 @@ st.markdown("""
         to { opacity: 1; transform: translateY(0); }
     }
     .element-container { animation: fadeIn 0.3s ease-out forwards; }
+
+    /* Text inputs, selectbox, number input — dark theme */
+    .stTextInput input, .stNumberInput input {
+        background-color: #1e293b !important; color: #e2e8f0 !important;
+        border: 1px solid #334155 !important; border-radius: 8px !important;
+    }
+    .stTextInput input:focus, .stNumberInput input:focus {
+        border-color: #2dd4bf !important; box-shadow: 0 0 0 1px #2dd4bf !important;
+    }
+    .stSelectbox > div > div { background-color: #1e293b !important; color: #e2e8f0 !important; }
+    .stSelectbox [data-baseweb="select"] > div { background-color: #1e293b !important; border-color: #334155 !important; }
+
+    /* Sidebar button hover — pink/magenta accent */
+    section[data-testid="stSidebar"] .stButton > button:hover {
+        background-color: #831843 !important;
+        border-color: #ec4899 !important;
+        color: #f9a8d4 !important;
+    }
+
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] { background-color: #0f172a; border-radius: 8px; gap: 2px; }
+    .stTabs [data-baseweb="tab"] { color: #94a3b8 !important; background-color: transparent; }
+    .stTabs [aria-selected="true"] { color: #2dd4bf !important; background-color: #1e293b !important; border-radius: 6px; }
+
+    /* Expander */
+    .streamlit-expanderHeader { background-color: #1e293b !important; color: #e2e8f0 !important; border-radius: 8px !important; }
+    details { border: 1px solid #334155 !important; border-radius: 8px !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -274,6 +327,10 @@ if "last_input" not in st.session_state:
     st.session_state.last_input = ""
 if "name_map" not in st.session_state:
     st.session_state.name_map = {}
+if "analysis_result" not in st.session_state:
+    st.session_state.analysis_result = ""
+if "accuracy_result" not in st.session_state:
+    st.session_state.accuracy_result = ""
 
 st.title("🇸🇬 Student Remark Generator")
 st.markdown("Automated academic progress remarks based on Singapore 21CC and BLGPS frameworks.")
@@ -283,46 +340,49 @@ with st.sidebar:
     st.header("Settings")
     mode_selection = st.radio("Target Mode:", ["BLGPS Mode", "21CC Mode"])
     st.divider()
-    input_mode = st.radio("Input Mode:", ["Quick Entry", "Names Enabled"],
-                          help="Quick Entry: paste index-number data directly. Names Enabled: structured form with student names (names stay private and are never sent to the AI).")
-    st.divider()
     st.subheader("Special Actions")
     help_clicked = st.button("📖 Guide / Instructions")
     analyse_clicked = st.button("📊 Analyse Class Data")
     accuracy_clicked = st.button("🔍 Italicize Inaccuracies")
 
-# --- INPUT AREA ---
-if input_mode == "Quick Entry":
-    user_data_input = st.text_area("Input Student Details:", placeholder="she/her 01 responsible (Class Monitor) 5, 02 helpful 4", height=150)
+# --- INPUT AREA (Tabs) ---
+tab_quick, tab_names = st.tabs(["⚡ Quick Entry", "📝 Names Enabled"])
 
-    if st.button("🚀 Generate Remarks", type="primary"):
+with tab_quick:
+    user_data_input = st.text_area("Input Student Details:",
+                                   placeholder="she/her 01 responsible (Class Monitor) 5, 02 helpful 4",
+                                   height=150)
+    if st.button("🚀 Generate Remarks", type="primary", key="gen_quick"):
         if user_data_input:
             with st.spinner("Generating..."):
                 res = call_gemini(user_data_input, mode_selection)
                 st.session_state.last_remarks = res
                 st.session_state.last_input = user_data_input
                 st.session_state.name_map = {}
-                st.markdown("### Generated Remarks")
-                st.write(res)
-                st.download_button("Download Remarks", res, file_name="student_remarks.txt")
+                st.session_state.analysis_result = ""
+                st.session_state.accuracy_result = ""
+            st.toast("✅ Remarks generated!")
         else:
             st.error("Please enter student data.")
 
-else:  # Names Enabled mode
-    st.markdown("### 📝 Names Enabled Mode")
+with tab_names:
     st.caption("Student names are kept private — only index placeholders are sent to the AI.")
-
     pronouns = st.radio("Pronouns for this batch:", ["she/her", "he/him"], horizontal=True)
     num_students = st.number_input("Number of students:", min_value=1, max_value=45, value=1, step=1)
+    st.caption("Rating guide: 5 = Excellent · 4 = Very Good · 3 = Good · 2 = Satisfactory · 1 = Needs Improvement")
 
     students = []
     for i in range(int(num_students)):
         with st.expander(f"Student {i + 1}", expanded=(i == 0)):
             name = st.text_input("Name", key=f"name_{i}", placeholder="e.g. Wei Lin")
-            characteristics = st.text_input("Characteristics / Descriptors", key=f"chars_{i}", placeholder="e.g. cheerful, responsible, hardworking")
-            roles = st.text_input("Class / Leadership Roles (optional)", key=f"roles_{i}", placeholder="e.g. Class Monitor, Prefect")
-            awards = st.text_input("Awards (optional)", key=f"awards_{i}", placeholder="e.g. Good Progress Award")
-            other = st.text_input("Other Information (optional)", key=f"other_{i}", placeholder="e.g. frequent latecoming, can focus better")
+            characteristics = st.text_input("Characteristics / Descriptors", key=f"chars_{i}",
+                                            placeholder="e.g. cheerful, responsible, hardworking")
+            roles = st.text_input("Class / Leadership Roles (optional)", key=f"roles_{i}",
+                                  placeholder="e.g. Class Monitor, Prefect")
+            awards = st.text_input("Awards (optional)", key=f"awards_{i}",
+                                   placeholder="e.g. Good Progress Award")
+            other = st.text_input("Other Information (optional)", key=f"other_{i}",
+                                  placeholder="e.g. frequent latecoming, can focus better")
             rating = st.selectbox("Behaviour Rating", options=[5, 4, 3, 2, 1], key=f"rating_{i}",
                                   help="5 = Excellent conduct, 1 = Needs significant improvement")
             students.append({
@@ -334,8 +394,7 @@ else:  # Names Enabled mode
                 "rating": rating,
             })
 
-    if st.button("🚀 Generate Remarks", type="primary"):
-        # Validate: every student needs at least a name
+    if st.button("🚀 Generate Remarks", type="primary", key="gen_names"):
         missing = [i + 1 for i, s in enumerate(students) if not s["name"]]
         if missing:
             st.error(f"Please enter a name for student(s): {', '.join(str(m) for m in missing)}")
@@ -347,11 +406,21 @@ else:  # Names Enabled mode
                 st.session_state.last_remarks = named_res
                 st.session_state.last_input = api_text
                 st.session_state.name_map = name_map
-                st.markdown("### Generated Remarks")
-                st.write(named_res)
-                st.download_button("Download Remarks", named_res, file_name="student_remarks.txt")
+                st.session_state.analysis_result = ""
+                st.session_state.accuracy_result = ""
+            st.toast("✅ Remarks generated!")
 
-# Process Sidebar Actions — use last generated remarks as context
+# --- PERSISTENT OUTPUT ---
+if st.session_state.last_remarks:
+    st.divider()
+    st.markdown("### Generated Remarks")
+    st.write(st.session_state.last_remarks)
+    csv_data = _remarks_to_csv(st.session_state.last_remarks, st.session_state.name_map)
+    st.download_button("📥 Download CSV", csv_data, file_name="student_remarks.csv", mime="text/csv")
+    with st.expander("📋 Copy raw text"):
+        st.code(st.session_state.last_remarks, language=None)
+
+# Process Sidebar Actions
 if help_clicked:
     with st.spinner("Loading guide..."):
         st.info(call_gemini("Display the full usage guide for this app, explaining the input format, modes, and available sidebar buttons.", mode_selection))
@@ -359,18 +428,15 @@ if help_clicked:
 if analyse_clicked:
     if st.session_state.last_remarks:
         with st.spinner("Analysing..."):
-            # Send sanitized input (no real names) to the API
             sanitized_remarks = st.session_state.last_remarks
             if st.session_state.name_map:
-                # Strip names back to placeholders for the API call
-                sanitized_remarks = st.session_state.last_remarks
                 for idx, name in st.session_state.name_map.items():
                     sanitized_remarks = sanitized_remarks.replace(name, idx)
             context = f"Here are the remarks I previously generated based on this input:\n\nINPUT: {st.session_state.last_input}\n\nREMARKS:\n{sanitized_remarks}\n\nNow analyse these remarks: provide a breakdown of competencies/values in table format."
             res = call_gemini(context, mode_selection)
             if st.session_state.name_map:
                 res = _restore_names(res, st.session_state.name_map)
-            st.write(res)
+            st.session_state.analysis_result = res
     else:
         st.warning("Generate remarks first before analysing.")
 
@@ -385,9 +451,19 @@ if accuracy_clicked:
             res = call_gemini(context, mode_selection)
             if st.session_state.name_map:
                 res = _restore_names(res, st.session_state.name_map)
-            st.write(res)
+            st.session_state.accuracy_result = res
     else:
         st.warning("Generate remarks first before checking accuracy.")
+
+if st.session_state.analysis_result:
+    st.divider()
+    st.markdown("### 📊 Class Data Analysis")
+    st.write(st.session_state.analysis_result)
+
+if st.session_state.accuracy_result:
+    st.divider()
+    st.markdown("### 🔍 Accuracy Check")
+    st.write(st.session_state.accuracy_result)
 
 st.divider()
 st.caption("Powered by Gemini 2.5 Flash | Framework: Singapore MOE 21CC / BLGPS")
