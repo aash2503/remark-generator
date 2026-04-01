@@ -71,7 +71,17 @@ Both modes share 21CC and R3ICH lists as supplementary word banks.
 - Ground every sentence in the student's specific descriptors. Avoid filler that could apply interchangeably to any student.
 - Reference framework traits naturally. Vary how you introduce them — do not default to the same formulaic phrase in every remark.
 - Vary language across students. Students with different descriptors must receive meaningfully different remarks.
-- You MUST wrap any extrapolated actions or specific examples not explicitly found in the input descriptors in single asterisks (*like this*). Do NOT italicize direct synonyms or close paraphrases. Example: input "hardworking" → "diligent" is a synonym (no asterisks), but "meticulous in completing assignments" is an extrapolation (*meticulous in completing assignments*).
+- CRITICAL — ASTERISK RULE (you must follow this in every single remark):
+  You MUST wrap extrapolated actions, invented examples, or inferred behaviours in single asterisks (*like this*).
+  "Extrapolated" means anything you added that was NOT directly stated or closely synonymous with the input descriptors.
+  Direct synonyms and close paraphrases of input descriptors do NOT get asterisks.
+  Examples:
+    Input "hardworking" → output "diligent" = synonym, NO asterisks.
+    Input "hardworking" → output "meticulous in completing assignments" = extrapolation, MUST be *meticulous in completing assignments*.
+    Input "helpful" → output "often goes out of her way to assist classmates" = extrapolation, MUST be *often goes out of her way to assist classmates*.
+    Input "bright" → output "grasps complex concepts with ease" = extrapolation, MUST be *grasps complex concepts with ease*.
+  If in doubt, wrap it. Every remark should contain at least one asterisk-wrapped phrase unless it uses only direct synonyms of the input.
+  Do NOT skip this rule. Do NOT use double asterisks (**) for this purpose — use single asterisks (*) only.
 
 Required Footer:
 - BLGPS mode: **Note that the output from here is a first draft, and will always require editing as the AI is not capable of producing flawlessly accurate output. Pay special attention to whether the descriptors match the BLGPS student outcome mentioned in the remark, if any. Italicized phrases are interpretive and should be reviewed for accuracy.**
@@ -83,7 +93,7 @@ Required Footer:
 EXEMPLARS = [
     # --- she/her exemplars ---
     ("she/her 01 easygoing helpful participative 4",
-     "01 is an easygoing and helpful student who participates actively in all lessons. Her willingness to assist others makes her a wonderful team member, and she embodies the spirit of a compassionate contributor. She communicates well with her peers, and her active involvement helps to create a dynamic and collaborative learning environment. Keep up the good work, 01!"),
+     "01 is an easygoing and helpful student who participates actively in all lessons. Her willingness to assist others makes her a *wonderful team member*, and she embodies the spirit of a compassionate contributor. She *communicates well with her peers*, and her active involvement helps to create *a dynamic and collaborative learning environment*. Keep up the good work, 01!"),
     ("she/her 02 diligent bright driven 5",
      "02 is a diligent and bright student with a remarkable drive to succeed. A curious thinker, she approaches her work with *meticulous care* and is consistently *self-motivated* to produce work of the highest quality. Her *inquisitive nature* and inventive thinking allow her to grasp complex concepts with ease and to excel in her studies. Well done, 02!"),
     ("she/her 03 responsible dependable 4",
@@ -95,30 +105,30 @@ EXEMPLARS = [
     ("she/her 06 cheerful resilient confident 4",
      "06 is a cheerful and resilient student who displays a great deal of confidence. She *tackles new challenges with enthusiasm*, and her positive outlook helps her to overcome any obstacles she faces. Her *ability to remain upbeat even during difficult tasks* is a testament to her character. Keep shining and believing in yourself, 06!"),
     ("she/her 07 easygoing friendly participative 4",
-     "07 is an easygoing and friendly student who participates actively in class. Her approachable nature makes her a wonderful team member, and she embodies the spirit of a compassionate contributor. She communicates well with her peers, and her willingness to contribute to our discussions helps to create a dynamic learning environment. Keep up the good work, 07!"),
+     "07 is an easygoing and friendly student who participates actively in class. Her approachable nature makes her a *wonderful team member*, and she embodies the spirit of a compassionate contributor. She *communicates well with her peers*, and her willingness to contribute to our discussions helps to create *a dynamic learning environment*. Keep up the good work, 07!"),
     ("she/her 08 well-spoken confident responsible 4",
-     "08 is a well-spoken, confident and responsible student. She is diligent and reliable and can be counted on to give her best effort in the work that she does. She gets along well with her classmates and is quick to offer a helping hand. Keep up the good work!"),
+     "08 is a well-spoken, confident and responsible student. She is *diligent and reliable* and can be counted on to *give her best effort* in the work that she does. She *gets along well with her classmates* and is *quick to offer a helping hand*. Keep up the good work!"),
     ("she/her 09 diligent polite (apply herself more) 3",
-     "09 is a diligent and polite student. She shows a positive learning attitude in class and takes pride in her work. She stands to grow even more by continuing to apply herself more fully when completing tasks. You can do it, 09!"),
+     "09 is a diligent and polite student. She *shows a positive learning attitude* in class and *takes pride in her work*. She stands to grow even more by continuing to apply herself more fully when completing tasks. You can do it, 09!"),
     ("she/her 10 respectful hardworking 4",
-     "10 is a respectful and hardworking student. She puts effort into her work, and ensures that she does her best. She works well with her classmates and is an active contributor during group and class discussions. Keep it up, 10!"),
+     "10 is a respectful and hardworking student. She puts effort into her work, and ensures that she does her best. She *works well with her classmates* and is *an active contributor during group and class discussions*. Keep it up, 10!"),
     # --- he/him exemplars ---
     ("he/him 11 responsible considerate (speak up more) 4",
-     "11 is a responsible and considerate student. He is well-liked by his peers and can be relied upon to set a good example for them, too. He takes pride in his work and consistently delivers to a very high standard. He has the potential to shine even more by being even more active in class discussions and speaking up more. 11, you are a joy to teach!"),
+     "11 is a responsible and considerate student. He is *well-liked by his peers* and can be relied upon to *set a good example for them*, too. He *takes pride in his work* and *consistently delivers to a very high standard*. He has the potential to shine even more by being even more active in class discussions and speaking up more. 11, you are a joy to teach!"),
     ("he/him 12 kind helpful reliable (speak up more) 4",
      "12 is a kind and helpful student. He looks out for the people around him and can be counted on by his friends and teachers to be a reliable and dependable presence in the class. He is *consistent in his work* and *continually produces output of a high standard*. He stands to grow even more by learning to speak up more confidently in class discussions. You can do it, 12!"),
     ("he/him 13 outspoken confident (more meticulous) 4",
-     "13 is an outspoken and confident student. He takes great pride in his work and holds himself to the highest standards, always making sure that he puts in the effort needed in order to excel. He stands to shine even more if he works on being more meticulous moving forward. You can do it, 13!"),
+     "13 is an outspoken and confident student. He *takes great pride in his work* and holds himself to the highest standards, always making sure that he *puts in the effort needed in order to excel*. He stands to shine even more if he works on being more meticulous moving forward. You can do it, 13!"),
     ("he/him 14 good-natured dependable (managing impulsivity) 3",
      "14 is a good-natured and dependable student. He is *eager to learn*, and is always ready to take part in class discussions. He *enjoys sharing things he has learned about with his classmates*, and offers a helping hand whenever he can. He stands to grow even more by managing his impulsivity and develop empathy for others. You can do it, 14!"),
     ("he/him 15 hardworking determined (more forthcoming) 4",
-     "15 is a hardworking, determined student. He takes his work very seriously and always makes every effort to deliver a product of the highest quality. He is well-liked by his peers, and can grow even more by learning to be more forthcoming in class discussions. Keep it up, 15!"),
+     "15 is a hardworking, determined student. He takes his work very seriously and always makes every effort to *deliver a product of the highest quality*. He is *well-liked by his peers*, and can grow even more by learning to be more forthcoming in class discussions. Keep it up, 15!"),
     ("he/him 16 responsible considerate (speak up more) 4",
-     "16 is a responsible and considerate student. He is well-liked by his peers and can be relied upon to set a good example for them, too. He takes pride in his work and consistently delivers to a very high standard. He has the potential to shine even more by being even more active in class discussions and speaking up more. 16, you are a joy to teach!"),
+     "16 is a responsible and considerate student. He is *well-liked by his peers* and can be relied upon to *set a good example for them*, too. He *takes pride in his work* and *consistently delivers to a very high standard*. He has the potential to shine even more by being even more active in class discussions and speaking up more. 16, you are a joy to teach!"),
     ("he/him 17 personable outgoing 4",
      "17 is a personable and outgoing student. He is always happy to share his thoughts, and can be counted on to *set a good example for his peers*. He *thinks deeply about what he observes*, and has *a strong sense of right and wrong*. Well done, 17!"),
     ("he/him 18 responsible helpful considerate kind (speak up more) 4",
-     "18 is a responsible and helpful student. He is considerate and kind, always looking out for his peers and happy to offer a helping hand. He is respectful towards his teachers and can be relied upon to give his best effort in his learning. He is well-liked by his peers, and has the potential to grow even more by working on speaking up confidently during lessons. You can do it, 18!"),
+     "18 is a responsible and helpful student. He is considerate and kind, always looking out for his peers and happy to offer a helping hand. He is *respectful towards his teachers* and can be relied upon to *give his best effort in his learning*. He is *well-liked by his peers*, and has the potential to grow even more by working on speaking up confidently during lessons. You can do it, 18!"),
 ]
 
 # --- APP LOGIC ---
@@ -343,6 +353,17 @@ st.markdown("""
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #334155; }
     
+    /* Make italic (extrapolated) phrases visually distinctive */
+    .stMarkdown em,
+    [data-testid="stMarkdownContainer"] em,
+    [data-testid="stMarkdown"] em {
+        color: #fbbf24 !important;
+        font-style: italic !important;
+        background-color: rgba(251, 191, 36, 0.1);
+        padding: 0 2px;
+        border-radius: 2px;
+    }
+
     /* Smooth message fade-in */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
@@ -485,7 +506,7 @@ with tab_names:
 if st.session_state.last_remarks:
     st.divider()
     st.markdown("### Generated Remarks")
-    st.write(st.session_state.last_remarks)
+    st.markdown(st.session_state.last_remarks)
 
     # Per-remark copy buttons
     remarks_text = st.session_state.last_remarks
