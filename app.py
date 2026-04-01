@@ -18,7 +18,7 @@ SYSTEM_INSTRUCTION = """
 Generate semester-end conduct remarks for Singapore primary school students.
 Write as an experienced, caring form teacher — warm, personal, and encouraging, never robotic or formulaic.
 Tone: positive, growth-mindset. Lead with strengths; frame improvements gently ("can do even better if…").
-Each remark: 55–75 words. All sentences describe the student in third person EXCEPT the final sentence, which is direct encouragement addressed to the student. Vary sentence structures widely across remarks.
+Each remark: 55–75 words. ALL sentences must be in third person — do NOT address the student directly (no "you", "your", or calling the student by name/index in second person). The final sentence should still be warm and encouraging, but written about the student, not to the student. Vary sentence structures widely across remarks.
 </objective>
 
 <input_format>
@@ -65,7 +65,7 @@ Both modes share 21CC and R3ICH lists as supplementary word banks.
 
 <formatting_constraints>
 - 55–75 words per remark. Vary sentence structure actively.
-- All sentences third person EXCEPT final sentence: direct encouragement to student.
+- ALL sentences in third person, including the final sentence. Never use "you" or "your". The final sentence should still be warm and encouraging but written about the student (e.g. "She is encouraged to keep up the good work." not "Keep up the good work!").
 - Positive, upbeat tone. Growth-mindset framing for improvements.
 - Parenthetical info in 2nd or 3rd sentence only.
 - Ground every sentence in the student's specific descriptors. Avoid filler that could apply interchangeably to any student.
@@ -93,42 +93,42 @@ Required Footer:
 EXEMPLARS = [
     # --- she/her exemplars ---
     ("she/her 01 easygoing helpful participative 4",
-     "01 is an easygoing and helpful student who participates actively in all lessons. Her willingness to assist others makes her a *wonderful team member*, and she embodies the spirit of a compassionate contributor. She *communicates well with her peers*, and her active involvement helps to create *a dynamic and collaborative learning environment*. Keep up the good work, 01!"),
+     "01 is an easygoing and helpful student who participates actively in all lessons. Her willingness to assist others makes her a *wonderful team member*, and she embodies the spirit of a compassionate contributor. She *communicates well with her peers*, and her active involvement helps to create *a dynamic and collaborative learning environment*. She is encouraged to keep up the good work."),
     ("she/her 02 diligent bright driven 5",
-     "02 is a diligent and bright student with a remarkable drive to succeed. A curious thinker, she approaches her work with *meticulous care* and is consistently *self-motivated* to produce work of the highest quality. Her *inquisitive nature* and inventive thinking allow her to grasp complex concepts with ease and to excel in her studies. Well done, 02!"),
+     "02 is a diligent and bright student with a remarkable drive to succeed. A curious thinker, she approaches her work with *meticulous care* and is consistently *self-motivated* to produce work of the highest quality. Her *inquisitive nature* and inventive thinking allow her to grasp complex concepts with ease and to excel in her studies. Well done to 02 on an excellent semester."),
     ("she/her 03 responsible dependable 4",
-     "03 is a responsible and dependable student who approaches her daily tasks with *a commendable work ethic*. She *takes ownership of her learning* and can always be trusted to complete her assignments diligently. Her *consistency and commitment* are the hallmarks of a confident learner, and these traits will serve her well as she continues to progress. Keep up the great work, 03!"),
+     "03 is a responsible and dependable student who approaches her daily tasks with *a commendable work ethic*. She *takes ownership of her learning* and can always be trusted to complete her assignments diligently. Her *consistency and commitment* are the hallmarks of a confident learner, and these traits will serve her well as she continues to progress."),
     ("she/her 04 resilient well-liked compassionate 4",
-     "04 is a resilient and well-liked student who shows great compassion toward others. She *navigates challenges with a positive mindset*, always looking for ways to support her peers. Her *kind-hearted nature* and *ability to build strong relationships* make her a valued member of our class. You are doing a wonderful job, 04!"),
+     "04 is a resilient and well-liked student who shows great compassion toward others. She *navigates challenges with a positive mindset*, always looking for ways to support her peers. Her *kind-hearted nature* and *ability to build strong relationships* make her a valued member of our class. She is doing a wonderful job."),
     ("she/her 05 softspoken sincere kind 4",
-     "05 is a soft-spoken, sincere, and kind student. She consistently demonstrates care for her classmates, *often going out of her way to offer a helping hand*. Her *gentle presence adds a sense of calm* to our classroom, and her sincerity is appreciated by everyone. Continue to be your kind and thoughtful self, 05!"),
+     "05 is a soft-spoken, sincere, and kind student. She consistently demonstrates care for her classmates, *often going out of her way to offer a helping hand*. Her *gentle presence adds a sense of calm* to our classroom, and her sincerity is appreciated by everyone. She should continue to be her kind and thoughtful self."),
     ("she/her 06 cheerful resilient confident 4",
-     "06 is a cheerful and resilient student who displays a great deal of confidence. She *tackles new challenges with enthusiasm*, and her positive outlook helps her to overcome any obstacles she faces. Her *ability to remain upbeat even during difficult tasks* is a testament to her character. Keep shining and believing in yourself, 06!"),
+     "06 is a cheerful and resilient student who displays a great deal of confidence. She *tackles new challenges with enthusiasm*, and her positive outlook helps her to overcome any obstacles she faces. Her *ability to remain upbeat even during difficult tasks* is a testament to her character. She should keep shining and believing in herself."),
     ("she/her 07 easygoing friendly participative 4",
-     "07 is an easygoing and friendly student who participates actively in class. Her approachable nature makes her a *wonderful team member*, and she embodies the spirit of a compassionate contributor. She *communicates well with her peers*, and her willingness to contribute to our discussions helps to create *a dynamic learning environment*. Keep up the good work, 07!"),
+     "07 is an easygoing and friendly student who participates actively in class. Her approachable nature makes her a *wonderful team member*, and she embodies the spirit of a compassionate contributor. She *communicates well with her peers*, and her willingness to contribute to our discussions helps to create *a dynamic learning environment*. She is encouraged to keep up the good work."),
     ("she/her 08 well-spoken confident responsible 4",
-     "08 is a well-spoken, confident and responsible student. She is *diligent and reliable* and can be counted on to *give her best effort* in the work that she does. She *gets along well with her classmates* and is *quick to offer a helping hand*. Keep up the good work!"),
+     "08 is a well-spoken, confident and responsible student. She is *diligent and reliable* and can be counted on to *give her best effort* in the work that she does. She *gets along well with her classmates* and is *quick to offer a helping hand*. She is encouraged to keep up the good work."),
     ("she/her 09 diligent polite (apply herself more) 3",
-     "09 is a diligent and polite student. She *shows a positive learning attitude* in class and *takes pride in her work*. She stands to grow even more by continuing to apply herself more fully when completing tasks. You can do it, 09!"),
+     "09 is a diligent and polite student. She *shows a positive learning attitude* in class and *takes pride in her work*. She stands to grow even more by continuing to apply herself more fully when completing tasks. With continued effort, she will surely flourish."),
     ("she/her 10 respectful hardworking 4",
-     "10 is a respectful and hardworking student. She puts effort into her work, and ensures that she does her best. She *works well with her classmates* and is *an active contributor during group and class discussions*. Keep it up, 10!"),
+     "10 is a respectful and hardworking student. She puts effort into her work, and ensures that she does her best. She *works well with her classmates* and is *an active contributor during group and class discussions*. She is encouraged to keep it up."),
     # --- he/him exemplars ---
     ("he/him 11 responsible considerate (speak up more) 4",
-     "11 is a responsible and considerate student. He is *well-liked by his peers* and can be relied upon to *set a good example for them*, too. He *takes pride in his work* and *consistently delivers to a very high standard*. He has the potential to shine even more by being even more active in class discussions and speaking up more. 11, you are a joy to teach!"),
+     "11 is a responsible and considerate student. He is *well-liked by his peers* and can be relied upon to *set a good example for them*, too. He *takes pride in his work* and *consistently delivers to a very high standard*. He has the potential to shine even more by being even more active in class discussions and speaking up more. He is a joy to teach."),
     ("he/him 12 kind helpful reliable (speak up more) 4",
-     "12 is a kind and helpful student. He looks out for the people around him and can be counted on by his friends and teachers to be a reliable and dependable presence in the class. He is *consistent in his work* and *continually produces output of a high standard*. He stands to grow even more by learning to speak up more confidently in class discussions. You can do it, 12!"),
+     "12 is a kind and helpful student. He looks out for the people around him and can be counted on by his friends and teachers to be a reliable and dependable presence in the class. He is *consistent in his work* and *continually produces output of a high standard*. He stands to grow even more by learning to speak up more confidently in class discussions. With continued effort, he will surely flourish."),
     ("he/him 13 outspoken confident (more meticulous) 4",
-     "13 is an outspoken and confident student. He *takes great pride in his work* and holds himself to the highest standards, always making sure that he *puts in the effort needed in order to excel*. He stands to shine even more if he works on being more meticulous moving forward. You can do it, 13!"),
+     "13 is an outspoken and confident student. He *takes great pride in his work* and holds himself to the highest standards, always making sure that he *puts in the effort needed in order to excel*. He stands to shine even more if he works on being more meticulous moving forward. With continued effort, he will surely shine."),
     ("he/him 14 good-natured dependable (managing impulsivity) 3",
-     "14 is a good-natured and dependable student. He is *eager to learn*, and is always ready to take part in class discussions. He *enjoys sharing things he has learned about with his classmates*, and offers a helping hand whenever he can. He stands to grow even more by managing his impulsivity and develop empathy for others. You can do it, 14!"),
+     "14 is a good-natured and dependable student. He is *eager to learn*, and is always ready to take part in class discussions. He *enjoys sharing things he has learned about with his classmates*, and offers a helping hand whenever he can. He stands to grow even more by managing his impulsivity and developing empathy for others."),
     ("he/him 15 hardworking determined (more forthcoming) 4",
-     "15 is a hardworking, determined student. He takes his work very seriously and always makes every effort to *deliver a product of the highest quality*. He is *well-liked by his peers*, and can grow even more by learning to be more forthcoming in class discussions. Keep it up, 15!"),
+     "15 is a hardworking, determined student. He takes his work very seriously and always makes every effort to *deliver a product of the highest quality*. He is *well-liked by his peers*, and can grow even more by learning to be more forthcoming in class discussions. He is encouraged to keep it up."),
     ("he/him 16 responsible considerate (speak up more) 4",
-     "16 is a responsible and considerate student. He is *well-liked by his peers* and can be relied upon to *set a good example for them*, too. He *takes pride in his work* and *consistently delivers to a very high standard*. He has the potential to shine even more by being even more active in class discussions and speaking up more. 16, you are a joy to teach!"),
+     "16 is a responsible and considerate student. He is *well-liked by his peers* and can be relied upon to *set a good example for them*, too. He *takes pride in his work* and *consistently delivers to a very high standard*. He has the potential to shine even more by being even more active in class discussions and speaking up more. He is a joy to teach."),
     ("he/him 17 personable outgoing 4",
-     "17 is a personable and outgoing student. He is always happy to share his thoughts, and can be counted on to *set a good example for his peers*. He *thinks deeply about what he observes*, and has *a strong sense of right and wrong*. Well done, 17!"),
+     "17 is a personable and outgoing student. He is always happy to share his thoughts, and can be counted on to *set a good example for his peers*. He *thinks deeply about what he observes*, and has *a strong sense of right and wrong*. Well done to 17 on a great semester."),
     ("he/him 18 responsible helpful considerate kind (speak up more) 4",
-     "18 is a responsible and helpful student. He is considerate and kind, always looking out for his peers and happy to offer a helping hand. He is *respectful towards his teachers* and can be relied upon to *give his best effort in his learning*. He is *well-liked by his peers*, and has the potential to grow even more by working on speaking up confidently during lessons. You can do it, 18!"),
+     "18 is a responsible and helpful student. He is considerate and kind, always looking out for his peers and happy to offer a helping hand. He is *respectful towards his teachers* and can be relied upon to *give his best effort in his learning*. He is *well-liked by his peers*, and has the potential to grow even more by working on speaking up confidently during lessons. With continued effort, he will surely flourish."),
 ]
 
 # --- APP LOGIC ---
@@ -593,5 +593,5 @@ Phrases in *italics* in the output are interpretive extrapolations beyond the in
 """)
 
 st.divider()
-st.caption("Powered by Gemini 3.1 Flash Lite Preview | Framework: Singapore MOE 21CC / BLGPS | v1.4.1")
+st.caption("Powered by Gemini 3.1 Flash Lite Preview | Framework: Singapore MOE 21CC / BLGPS | v1.5.0")
 
