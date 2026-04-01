@@ -593,5 +593,5 @@ Phrases in *italics* in the output are interpretive extrapolations beyond the in
 """)
 
 st.divider()
-st.caption("Powered by Gemini 3.1 Flash Lite Preview | Framework: Singapore MOE 21CC / BLGPS | v1.4.0")
+st.caption("Powered by Gemini 3.1 Flash Lite Preview | Framework: Singapore MOE 21CC / BLGPS | v1.4.1")
 
